@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 from gensim.models import Word2Vec
 import umap
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import plotly.express as px
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
@@ -49,21 +48,21 @@ if uploaded_file is not None:
         umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
         X_umap_3d = umap_3d.fit_transform(word_vectors)
 
-        # Plot the results using Matplotlib
-        fig = plt.figure(figsize=(10, 7))
-        ax = fig.add_subplot(111, projection='3d')
+        # Create a DataFrame for Plotly
+        umap_df = pd.DataFrame(X_umap_3d, columns=['UMAP1', 'UMAP2', 'UMAP3'])
+        umap_df['Category'] = categories_encoded
 
-        # Customize the plot with colors based on categories
-        scatter = ax.scatter(X_umap_3d[:, 0], X_umap_3d[:, 1], X_umap_3d[:, 2], c=categories_encoded, cmap='Spectral', marker='o')
-
-        # Add a legend with category names
-        legend1 = ax.legend(*scatter.legend_elements(), title="Categories")
-        ax.add_artist(legend1)
-
-        ax.set_title('3D UMAP Projection of Text Data')
-        ax.set_xlabel('UMAP Dimension 1')
-        ax.set_ylabel('UMAP Dimension 2')
-        ax.set_zlabel('UMAP Dimension 3')
+        # Plot the results using Plotly
+        fig = px.scatter_3d(
+            umap_df,
+            x='UMAP1',
+            y='UMAP2',
+            z='UMAP3',
+            color='Category',
+            labels={'Category': 'Categories'},
+            title='3D UMAP Projection of Text Data',
+            template='plotly_white'
+        )
 
         # Display the plot in Streamlit
-        st.pyplot(fig)
+        st.plotly_chart(fig)
