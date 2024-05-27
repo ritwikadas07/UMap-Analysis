@@ -51,6 +51,7 @@ if uploaded_file is not None:
         # Create a DataFrame for Plotly
         umap_df = pd.DataFrame(X_umap_3d, columns=['UMAP1', 'UMAP2', 'UMAP3'])
         umap_df['Category'] = categories_encoded
+        umap_df['Word'] = flattened_words
 
         # Plot the results using Plotly
         fig = px.scatter_3d(
