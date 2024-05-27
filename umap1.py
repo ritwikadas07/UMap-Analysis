@@ -60,7 +60,7 @@ if uploaded_file is not None:
             y='UMAP2',
             z='UMAP3',
             color='Category',
-            hover_data={'Word': True, 'Category': False},
+            hover_data={'Word': True, 'Category': True},
             labels={'Category': 'Categories'},
             title='3D UMAP Projection of Text Data',
             template='plotly_white'
