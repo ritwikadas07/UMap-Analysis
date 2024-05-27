@@ -59,7 +59,7 @@ if uploaded_file is not None:
             y='UMAP2',
             z='UMAP3',
             color='Category',
-            labels={'Category': 'Categories'},
+            labels={'Category': 'Categories', 'Word': 'Words'},
             title='3D UMAP Projection of Text Data',
             template='plotly_white'
         )
