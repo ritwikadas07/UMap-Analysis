@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Function to process the uploaded TSV file
-def process_glove_file(uploaded_file):
+def process_glove_file(uploaded_file, limit=None):
     word_vectors = {}
     for i, line in enumerate(uploaded_file):
+        if limit and i >= limit:
+            break
         try:
             parts = line.decode('utf-8').split()
             word = parts[0]
@@ -25,8 +27,8 @@ st.title("3D UMAP Projection of GloVe Vectors")
 uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
 
 if uploaded_file is not None:
-    # Read the file and process it
-    glove_vectors = process_glove_file(uploaded_file)
+    # Read the file and process it, limiting to 1000 vectors for testing
+    glove_vectors = process_glove_file(uploaded_file, limit=1000)
     
     if len(glove_vectors) == 0:
         st.error("No valid word vectors found in the uploaded file.")
