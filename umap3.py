@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import umap
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import plotly.express as px
 
 # Function to process the uploaded TSV file
 def process_glove_file(uploaded_file, limit=None):
@@ -50,24 +49,15 @@ if uploaded_file is not None:
         st.write("### UMAP Results DataFrame")
         st.dataframe(umap_df)
 
-        # Plotting
-        fig = plt.figure(figsize=(10, 8))
-        ax = fig.add_subplot(111, projection='3d')
+        # Plotting with Plotly
+        fig = px.scatter_3d(umap_df, x='UMAP1', y='UMAP2', z='UMAP3', text='Word')
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D UMAP Projection of GloVe Vectors',
+                          scene=dict(xaxis_title='UMAP1',
+                                     yaxis_title='UMAP2',
+                                     zaxis_title='UMAP3'))
 
-        # Plot each word vector
-        scatter = ax.scatter(umap_df['UMAP1'], umap_df['UMAP2'], umap_df['UMAP3'], c='b', marker='o')
-
-        # Add labels to the points
-        for i, word in enumerate(umap_df['Word']):
-            ax.text(umap_df['UMAP1'][i], umap_df['UMAP2'][i], umap_df['UMAP3'][i], word, size=10, zorder=1, color='k')
-
-        # Set labels and title
-        ax.set_xlabel('UMAP1')
-        ax.set_ylabel('UMAP2')
-        ax.set_zlabel('UMAP3')
-        ax.set_title('3D UMAP Projection of GloVe Vectors')
-
-        # Display Plot
-        st.pyplot(fig)
+        # Display Plotly figure
+        st.plotly_chart(fig)
 else:
     st.write("Please upload a GloVe TSV file to visualize the UMAP projection.")
