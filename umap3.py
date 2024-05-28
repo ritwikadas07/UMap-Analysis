@@ -20,7 +20,7 @@ def process_glove_file(uploaded_file, limit=None):
     return word_vectors
 
 # Streamlit App
-st.title("3D UMAP Projection of GloVe Vectors")
+st.title("3D UMAP Projection of Vectors")
 
 # Upload the TSV file
 uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
@@ -60,4 +60,4 @@ if uploaded_file is not None:
         # Display Plotly figure
         st.plotly_chart(fig)
 else:
-    st.write("Please upload a GloVe TSV file to visualize the UMAP projection.")
+    st.write("Please upload a TSV file to visualize the UMAP projection.")
