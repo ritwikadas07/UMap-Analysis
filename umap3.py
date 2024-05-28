@@ -50,7 +50,7 @@ if uploaded_file is not None:
         st.dataframe(umap_df)
 
         # Plotting with Plotly
-        fig = px.scatter_3d(umap_df, x='UMAP1', y='UMAP2', z='UMAP3', text='Word')
+        fig = px.scatter_3d(umap_df, x='UMAP1', y='UMAP2', z='UMAP3', hover_name='Word')
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
         fig.update_layout(title='3D UMAP Projection of GloVe Vectors',
                           scene=dict(xaxis_title='UMAP1',
