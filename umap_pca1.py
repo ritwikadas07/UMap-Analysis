@@ -41,7 +41,7 @@ if dataset_choice == "Default Digits":
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
-    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
+    st.write("### The Animal Descriptions Dataset")
     st.write(df.head(100))
 
     # Compute TF-IDF representation
@@ -62,11 +62,17 @@ elif dataset_choice == "Default NAICS Codes":
     st.write("### Contents of the NAICS Codes Dataset")
     st.write(df)
 
+    # Ensure only numerical columns are used for analysis
+    numeric_df = df.select_dtypes(include=[np.number])
+
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     df = load_financial_statements()
     st.write("### Contents of the Financial Statements Dataset")
     st.write(df)
+
+    # Ensure only numerical columns are used for analysis
+    numeric_df = df.select_dtypes(include=[np.number])
 
 else:
     # Upload the TSV file
@@ -78,17 +84,20 @@ else:
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))
 
-if 'df' in locals():
+if 'df' in locals() and dataset_choice != "Default Animal Descriptions":
+    # Use only numerical data for analysis
+    numeric_df = df.select_dtypes(include=[np.number])
+
     # Extract features and labels
     if 'label' in df.columns:
         labels = df['label']
-        features = df.drop(columns=['label'])
+        features = numeric_df.drop(columns=['label'])
     elif 'Animal' in df.columns:
         labels = df.index
-        features = df
+        features = numeric_df
     else:
         labels = df.index
-        features = df
+        features = numeric_df
 
     # Select the type of analysis
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA"])
