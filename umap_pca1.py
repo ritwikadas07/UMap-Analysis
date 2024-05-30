@@ -36,13 +36,13 @@ if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
     df = load_digits_dataset()
     st.write("### Contents of the Digits Dataset")
-    st.write(df)
+    st.write(df)  # Display contents of the Digits dataset
 
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
-    st.write("### The Animal Descriptions Dataset")
-    st.write(df.head(100))
+    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
+    st.write(df.head(100))  # Display first 100 sentences of the Animal Descriptions dataset
 
     # Compute TF-IDF representation
     vectorizer = TfidfVectorizer()
@@ -51,28 +51,41 @@ elif dataset_choice == "Default Animal Descriptions":
     # Convert TF-IDF matrix to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"].head(100), columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each Paragraph")
-    st.write(tfidf_df)
+    st.write(tfidf_df)  # Display TF-IDF vectors
 
     # Set df to tfidf_df for further processing
     df = tfidf_df
+    labels = df.index
 
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
     df = load_naics_codes()
     st.write("### Contents of the NAICS Codes Dataset")
-    st.write(df)
+    st.write(df)  # Display contents of the NAICS Codes dataset
 
-    # Ensure only numerical columns are used for analysis
-    numeric_df = df.select_dtypes(include=[np.number])
+    # Compute TF-IDF representation for descriptions
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+
+    # Convert TF-IDF matrix to DataFrame
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
+    st.write("### TF-IDF Vectors for Each NAICS Description")
+    st.write(tfidf_df)  # Display TF-IDF vectors
+
+    # Set df to tfidf_df for further processing
+    df = tfidf_df
+    labels = df.index
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     df = load_financial_statements()
     st.write("### Contents of the Financial Statements Dataset")
-    st.write(df)
+    st.write(df)  # Display contents of the Financial Statements dataset
 
     # Ensure only numerical columns are used for analysis
     numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['Company']  # Use company name for hover name
+    features = numeric_df
 
 else:
     # Upload the TSV file
@@ -82,13 +95,13 @@ else:
         # Process the uploaded file
         df = pd.read_csv(uploaded_file, sep='\t')
         st.write("### First 10 Lines of the Uploaded Data")
-        st.write(df.head(10))
+        st.write(df.head(10))  # Display first 10 lines of the uploaded data
 
-if 'df' in locals() and dataset_choice != "Default Animal Descriptions":
+if 'df' in locals() and dataset_choice != "Default Animal Descriptions" and dataset_choice != "Default NAICS Codes":
     # Use only numerical data for analysis
     numeric_df = df.select_dtypes(include=[np.number])
 
-    # Extract features and labels
+    # Extract features and labels for other datasets
     if 'label' in df.columns:
         labels = df['label']
         features = numeric_df.drop(columns=['label'])
@@ -138,7 +151,7 @@ if 'df' in locals() and dataset_choice != "Default Animal Descriptions":
 
     # Display the DataFrame for the analysis results
     st.write("### Analysis Results DataFrame")
-    st.dataframe(result_df)
+    st.dataframe(result_df)  # Display the analysis results DataFrame
 
     # Display Plotly figure
     st.plotly_chart(fig)
