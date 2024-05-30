@@ -13,9 +13,9 @@ def process_tsv_file(uploaded_file, limit=None):
         df = df.head(limit)
     return df
 
-# Function to load the default MNIST dataset
-def load_mnist_dataset():
-    return pd.read_csv('mnist_sample.csv')
+# Function to load the default Digits dataset
+def load_digits_dataset():
+    return pd.read_csv('digits_sample.csv')
 
 # Function to load the default animal descriptions dataset
 def load_animal_descriptions():
@@ -25,12 +25,12 @@ def load_animal_descriptions():
 st.title("3D Projection of Vectors")
 
 # Option to use default dataset or upload
-dataset_choice = st.selectbox("Choose a dataset", ["Default MNIST", "Default Animal Descriptions", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Animal Descriptions", "Upload your own TSV file"])
 
-if dataset_choice == "Default MNIST":
-    st.write("Using the default MNIST dataset.")
-    df = load_mnist_dataset()
-    st.write("### Contents of the MNIST Dataset")
+if dataset_choice == "Default Digits":
+    st.write("Using the default Digits dataset.")
+    df = load_digits_dataset()
+    st.write("### Contents of the Digits Dataset")
     st.write(df)
 
 elif dataset_choice == "Default Animal Descriptions":
