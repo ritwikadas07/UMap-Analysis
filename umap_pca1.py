@@ -80,6 +80,7 @@ elif dataset_choice == "Default NAICS Codes":
     df = tfidf_df
     labels = df.index
     features = df
+    labels = df['Description']  # Use description for hover name
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
