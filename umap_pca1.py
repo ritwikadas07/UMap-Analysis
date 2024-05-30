@@ -67,6 +67,9 @@ elif dataset_choice == "Default NAICS Codes":
     st.write("### Contents of the NAICS Codes Dataset")
     st.write(df)  # Display contents of the NAICS Codes dataset
 
+    # Set labels to the descriptions before TF-IDF
+    labels = df['Description']
+
     # Compute TF-IDF representation for descriptions
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
@@ -78,9 +81,7 @@ elif dataset_choice == "Default NAICS Codes":
 
     # Set df to tfidf_df for further processing
     df = tfidf_df
-    labels = df.index
     features = df
-    labels = df['Description']  # Use description for hover name
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
