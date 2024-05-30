@@ -36,7 +36,7 @@ if dataset_choice == "Default Digits":
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default animal descriptions dataset.")
     df = load_animal_descriptions()
-    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
+    st.write("### The Animal Descriptions Dataset")
     st.write(df.head(100))
 
     # Compute TF-IDF representation
