@@ -37,6 +37,9 @@ if dataset_choice == "Default Digits":
     df = load_digits_dataset()
     st.write("### Contents of the Digits Dataset")
     st.write(df)  # Display contents of the Digits dataset
+    numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['label']
+    features = numeric_df.drop(columns=['label'])
 
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
@@ -56,6 +59,7 @@ elif dataset_choice == "Default Animal Descriptions":
     # Set df to tfidf_df for further processing
     df = tfidf_df
     labels = df.index
+    features = df
 
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
@@ -75,6 +79,7 @@ elif dataset_choice == "Default NAICS Codes":
     # Set df to tfidf_df for further processing
     df = tfidf_df
     labels = df.index
+    features = df
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
@@ -97,21 +102,22 @@ else:
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))  # Display first 10 lines of the uploaded data
 
-if 'df' in locals() and dataset_choice != "Default Animal Descriptions" and dataset_choice != "Default NAICS Codes":
-    # Use only numerical data for analysis
-    numeric_df = df.select_dtypes(include=[np.number])
+        # Use only numerical data for analysis
+        numeric_df = df.select_dtypes(include=[np.number])
 
-    # Extract features and labels for other datasets
-    if 'label' in df.columns:
-        labels = df['label']
-        features = numeric_df.drop(columns=['label'])
-    elif 'Animal' in df.columns:
-        labels = df.index
-        features = numeric_df
-    else:
-        labels = df.index
-        features = numeric_df
+        # Extract features and labels for uploaded dataset
+        if 'label' in df.columns:
+            labels = df['label']
+            features = numeric_df.drop(columns=['label'])
+        elif 'Animal' in df.columns:
+            labels = df.index
+            features = numeric_df
+        else:
+            labels = df.index
+            features = numeric_df
 
+# Perform analysis only if features and labels are set
+if 'features' in locals() and 'labels' in locals():
     # Select the type of analysis
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA"])
 
