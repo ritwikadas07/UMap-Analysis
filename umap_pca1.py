@@ -4,6 +4,7 @@ import numpy as np
 import umap
 import plotly.express as px
 from sklearn.decomposition import PCA
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Function to process the uploaded TSV file
 def process_tsv_file(uploaded_file, limit=None):
@@ -16,15 +17,15 @@ def process_tsv_file(uploaded_file, limit=None):
 def load_mnist_dataset():
     return pd.read_csv('mnist_sample.csv')
 
-# Function to load the default TF-IDF dataset
-def load_tfidf_dataset():
-    return pd.read_csv('animal_essays_tfidf.csv')
+# Function to load the default animal descriptions dataset
+def load_animal_descriptions():
+    return pd.read_csv('animal_descriptions.csv')
 
 # Streamlit App
 st.title("3D Projection of Vectors")
 
 # Option to use default dataset or upload
-dataset_choice = st.selectbox("Choose a dataset", ["Default MNIST", "Default TF-IDF", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default MNIST", "Default Animal Descriptions", "Upload your own TSV file"])
 
 if dataset_choice == "Default MNIST":
     st.write("Using the default MNIST dataset.")
@@ -32,11 +33,23 @@ if dataset_choice == "Default MNIST":
     st.write("### Contents of the MNIST Dataset")
     st.write(df)
 
-elif dataset_choice == "Default TF-IDF":
-    st.write("Using the default TF-IDF dataset.")
-    df = load_tfidf_dataset()
-    st.write("### Contents of the TF-IDF Dataset")
-    st.write(df)
+elif dataset_choice == "Default Animal Descriptions":
+    st.write("Using the default animal descriptions dataset.")
+    df = load_animal_descriptions()
+    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
+    st.write(df.head(100))
+
+    # Compute TF-IDF representation
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"].head(100))
+
+    # Convert TF-IDF matrix to DataFrame
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"].head(100), columns=vectorizer.get_feature_names_out())
+    st.write("### TF-IDF Vectors for Each Paragraph")
+    st.write(tfidf_df)
+
+    # Set df to tfidf_df for further processing
+    df = tfidf_df
 
 else:
     # Upload the TSV file
@@ -53,9 +66,9 @@ if 'df' in locals():
     if 'label' in df.columns:
         labels = df['label']
         features = df.drop(columns=['label'])
-    elif 'Word' in df.columns:
-        labels = df['Word']
-        features = df.drop(columns=['Word'])
+    elif 'Animal' in df.columns:
+        labels = df.index
+        features = df
     else:
         labels = df.index
         features = df
