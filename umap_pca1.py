@@ -6,13 +6,21 @@ import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
+import matplotlib.pyplot as plt
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
     digits = load_digits()
     digits_df = pd.DataFrame(digits.data)
     digits_df['label'] = digits.target
-    return digits_df
+    return digits_df, digits.images
+
+# Function to load the Fashion MNIST dataset from CSV
+def load_fashion_mnist_dataset():
+    fashion_mnist_df = pd.read_csv('/mnt/data/fashion-mnist_train.csv')
+    images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
+    fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
+    return fashion_mnist_df, images
 
 # Function to load the default animal descriptions dataset
 def load_animal_descriptions():
@@ -30,13 +38,42 @@ def load_financial_statements():
 st.title("3D Projection of Vectors")
 
 # Option to use default dataset or upload
-dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
 
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
-    df = load_digits_dataset()
+    df, images = load_digits_dataset()
     st.write("### Contents of the Digits Dataset")
     st.write(df)  # Display contents of the Digits dataset
+
+    # Display sample images
+    st.write("### Sample Images from the Digits Dataset")
+    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+    for i in range(5):
+        axes[i].imshow(images[i], cmap='gray')
+        axes[i].set_title(f"Label: {df['label'][i]}")
+        axes[i].axis('off')
+    st.pyplot(fig)
+
+    numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['label']
+    features = numeric_df.drop(columns=['label'])
+
+elif dataset_choice == "Default Fashion MNIST":
+    st.write("Using the default Fashion MNIST dataset.")
+    df, images = load_fashion_mnist_dataset()
+    st.write("### Contents of the Fashion MNIST Dataset")
+    st.write(df)  # Display contents of the Fashion MNIST dataset
+
+    # Display sample images
+    st.write("### Sample Images from the Fashion MNIST Dataset")
+    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+    for i in range(5):
+        axes[i].imshow(images[i], cmap='gray')
+        axes[i].set_title(f"Label: {df['label'][i]}")
+        axes[i].axis('off')
+    st.pyplot(fig)
+
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
@@ -44,15 +81,15 @@ if dataset_choice == "Default Digits":
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
-    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
-    st.write(df.head(100))  # Display first 100 sentences of the Animal Descriptions dataset
+    st.write("### Animal Descriptions Dataset")
+    st.write(df)  # Display animal descriptions dataset
 
     # Compute TF-IDF representation
     vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"].head(100))
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
 
     # Convert TF-IDF matrix to DataFrame
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"].head(100), columns=vectorizer.get_feature_names_out())
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each Paragraph")
     st.write(tfidf_df)  # Display TF-IDF vectors
 
@@ -64,8 +101,8 @@ elif dataset_choice == "Default Animal Descriptions":
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
     df = load_naics_codes()
-    st.write("### Contents of the NAICS Codes Dataset")
-    st.write(df)  # Display contents of the NAICS Codes dataset
+    st.write("### NAICS Codes Dataset")
+    st.write(df)  # Display NAICS Codes dataset
 
     # Set labels to the descriptions before TF-IDF
     labels = df['Description']
@@ -86,8 +123,8 @@ elif dataset_choice == "Default NAICS Codes":
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     df = load_financial_statements()
-    st.write("### Contents of the Financial Statements Dataset")
-    st.write(df)  # Display contents of the Financial Statements dataset
+    st.write("### Financial Statements Dataset")
+    st.write(df)  # Display financial statements dataset
 
     # Ensure only numerical columns are used for analysis
     numeric_df = df.select_dtypes(include=[np.number])
