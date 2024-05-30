@@ -5,27 +5,32 @@ import umap
 import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
-
-# Function to process the uploaded TSV file
-def process_tsv_file(uploaded_file, limit=None):
-    df = pd.read_csv(uploaded_file, sep='\t')
-    if limit:
-        df = df.head(limit)
-    return df
+from sklearn.datasets import load_digits
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
-    return pd.read_csv('digits_sample.csv')
+    digits = load_digits()
+    digits_df = pd.DataFrame(digits.data)
+    digits_df['label'] = digits.target
+    return digits_df
 
 # Function to load the default animal descriptions dataset
 def load_animal_descriptions():
     return pd.read_csv('animal_descriptions.csv')
 
+# Function to load the default NAICS codes dataset
+def load_naics_codes():
+    return pd.read_csv('naics_codes.csv')
+
+# Function to load the default financial statements dataset
+def load_financial_statements():
+    return pd.read_csv('financial_statements.csv')
+
 # Streamlit App
 st.title("3D Projection of Vectors")
 
 # Option to use default dataset or upload
-dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Animal Descriptions", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
 
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
@@ -34,9 +39,9 @@ if dataset_choice == "Default Digits":
     st.write(df)
 
 elif dataset_choice == "Default Animal Descriptions":
-    st.write("Using the default animal descriptions dataset.")
+    st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
-    st.write("### The Animal Descriptions Dataset")
+    st.write("### First 100 Sentences of the Animal Descriptions Dataset")
     st.write(df.head(100))
 
     # Compute TF-IDF representation
@@ -51,13 +56,25 @@ elif dataset_choice == "Default Animal Descriptions":
     # Set df to tfidf_df for further processing
     df = tfidf_df
 
+elif dataset_choice == "Default NAICS Codes":
+    st.write("Using the default NAICS Codes dataset.")
+    df = load_naics_codes()
+    st.write("### Contents of the NAICS Codes Dataset")
+    st.write(df)
+
+elif dataset_choice == "Default Financial Statements":
+    st.write("Using the default Financial Statements dataset.")
+    df = load_financial_statements()
+    st.write("### Contents of the Financial Statements Dataset")
+    st.write(df)
+
 else:
     # Upload the TSV file
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
     
     if uploaded_file is not None:
         # Process the uploaded file
-        df = process_tsv_file(uploaded_file, limit=1000)
+        df = pd.read_csv(uploaded_file, sep='\t')
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))
 
