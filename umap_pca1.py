@@ -7,6 +7,7 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
+import requests
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -17,7 +18,7 @@ def load_digits_dataset():
 
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('/mnt/data/fashion-mnist_train.csv')
+    fashion_mnist_df = pd.read_csv('fashion-mnist_train.csv')
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
     return fashion_mnist_df, images
