@@ -10,28 +10,39 @@ import matplotlib.pyplot as plt
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
+    # Load the Digits dataset from sklearn
     digits = load_digits()
+    # Convert the dataset into a DataFrame
     digits_df = pd.DataFrame(digits.data)
+    # Add the target labels to the DataFrame
     digits_df['label'] = digits.target
+    # Return the DataFrame and the images
     return digits_df, digits.images
 
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
+    # Load the Fashion MNIST dataset from a CSV file
     fashion_mnist_df = pd.read_csv('fashion-mnist_train.csv')
+    # Reshape the image data
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
+    # Add the target labels to the DataFrame
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
+    # Return the DataFrame and the images
     return fashion_mnist_df, images
 
 # Function to load the default animal descriptions dataset
 def load_animal_descriptions():
+    # Load the animal descriptions dataset from a CSV file
     return pd.read_csv('animal_descriptions.csv')
 
 # Function to load the default NAICS codes dataset
 def load_naics_codes():
+    # Load the NAICS codes dataset from a CSV file
     return pd.read_csv('naics_codes.csv')
 
 # Function to load the default financial statements dataset
 def load_financial_statements():
+    # Load the financial statements dataset from a CSV file
     return pd.read_csv('financial_statements.csv')
 
 # Streamlit App
@@ -40,11 +51,12 @@ st.title("3D Projection of Vectors")
 # Option to use default dataset or upload
 dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
 
+# Handle the default Digits dataset
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
     df, images = load_digits_dataset()
     st.write("### Contents of the Digits Dataset")
-    st.write(df)  # Display contents of the Digits dataset
+    st.write(df.head(20))  # Display only the first 20 rows of the Digits dataset
 
     # Display sample images
     st.write("### Sample Images from the Digits Dataset")
@@ -55,15 +67,17 @@ if dataset_choice == "Default Digits":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
 
+# Handle the default Fashion MNIST dataset
 elif dataset_choice == "Default Fashion MNIST":
     st.write("Using the default Fashion MNIST dataset.")
     df, images = load_fashion_mnist_dataset()
     st.write("### Contents of the Fashion MNIST Dataset")
-    st.write(df)  # Display contents of the Fashion MNIST dataset
+    st.write(df.head(20))  # Display only the first 20 rows of the Fashion MNIST dataset
 
     # Display sample images
     st.write("### Sample Images from the Fashion MNIST Dataset")
@@ -74,15 +88,17 @@ elif dataset_choice == "Default Fashion MNIST":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
 
+# Handle the default Animal Descriptions dataset
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
     st.write("### Animal Descriptions Dataset")
-    st.write(df)  # Display animal descriptions dataset
+    st.write(df.head(20))  # Display only the first 20 rows of the Animal Descriptions dataset
 
     # Compute TF-IDF representation
     vectorizer = TfidfVectorizer()
@@ -91,18 +107,19 @@ elif dataset_choice == "Default Animal Descriptions":
     # Convert TF-IDF matrix to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each Paragraph")
-    st.write(tfidf_df)  # Display TF-IDF vectors
+    st.write(tfidf_df.head(20))  # Display only the first 20 rows of the TF-IDF vectors
 
     # Set df to tfidf_df for further processing
     df = tfidf_df
     labels = df.index
     features = df
 
+# Handle the default NAICS Codes dataset
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
     df = load_naics_codes()
     st.write("### NAICS Codes Dataset")
-    st.write(df)  # Display NAICS Codes dataset
+    st.write(df.head(20))  # Display only the first 20 rows of the NAICS Codes dataset
 
     # Set labels to the descriptions before TF-IDF
     labels = df['Description']
@@ -114,25 +131,26 @@ elif dataset_choice == "Default NAICS Codes":
     # Convert TF-IDF matrix to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each NAICS Description")
-    st.write(tfidf_df)  # Display TF-IDF vectors
+    st.write(tfidf_df.head(20))  # Display only the first 20 rows of the TF-IDF vectors
 
     # Set df to tfidf_df for further processing
     df = tfidf_df
     features = df
 
+# Handle the default Financial Statements dataset
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     df = load_financial_statements()
     st.write("### Financial Statements Dataset")
-    st.write(df)  # Display financial statements dataset
+    st.write(df.head(20))  # Display only the first 20 rows of the Financial Statements dataset
 
     # Ensure only numerical columns are used for analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['Company']  # Use company name for hover name
     features = numeric_df
 
+# Handle the uploaded TSV file
 else:
-    # Upload the TSV file
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
     
     if uploaded_file is not None:
