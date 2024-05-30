@@ -7,7 +7,6 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
-import requests
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
