@@ -8,38 +8,41 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
 
-# Clear the cache to ensure fresh data is loaded every time
-st.cache_data.clear()
-
 # Function to load the default Digits dataset
-@st.cache_data
 def load_digits_dataset():
+    # Load the Digits dataset from sklearn
     digits = load_digits()
+    # Convert the dataset into a DataFrame
     digits_df = pd.DataFrame(digits.data)
+    # Add the target labels to the DataFrame
     digits_df['label'] = digits.target
+    # Return the DataFrame and the images
     return digits_df, digits.images
 
 # Function to load the Fashion MNIST dataset from CSV
-@st.cache_data
 def load_fashion_mnist_dataset():
+    # Load the Fashion MNIST dataset from a CSV file
     fashion_mnist_df = pd.read_csv('fashion-mnist_train.csv')
+    # Reshape the image data
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
+    # Add the target labels to the DataFrame
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
+    # Return the DataFrame and the images
     return fashion_mnist_df, images
 
 # Function to load the default animal descriptions dataset
-@st.cache_data
 def load_animal_descriptions():
+    # Load the animal descriptions dataset from a CSV file
     return pd.read_csv('animal_descriptions.csv')
 
 # Function to load the default NAICS codes dataset
-@st.cache_data
 def load_naics_codes():
+    # Load the NAICS codes dataset from a CSV file
     return pd.read_csv('naics_codes.csv')
 
 # Function to load the default financial statements dataset
-@st.cache_data
 def load_financial_statements():
+    # Load the financial statements dataset from a CSV file
     return pd.read_csv('financial_statements.csv')
 
 # Streamlit App
@@ -48,6 +51,7 @@ st.title("3D Projection of Vectors")
 # Option to use default dataset or upload
 dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
 
+# Handle the default Digits dataset
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
     df, images = load_digits_dataset()
@@ -63,10 +67,12 @@ if dataset_choice == "Default Digits":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
 
+# Handle the default Fashion MNIST dataset
 elif dataset_choice == "Default Fashion MNIST":
     st.write("Using the default Fashion MNIST dataset.")
     df, images = load_fashion_mnist_dataset()
@@ -82,10 +88,12 @@ elif dataset_choice == "Default Fashion MNIST":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
 
+# Handle the default Animal Descriptions dataset
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     df = load_animal_descriptions()
@@ -106,6 +114,7 @@ elif dataset_choice == "Default Animal Descriptions":
     labels = df.index
     features = df
 
+# Handle the default NAICS Codes dataset
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
     df = load_naics_codes()
@@ -128,6 +137,7 @@ elif dataset_choice == "Default NAICS Codes":
     df = tfidf_df
     features = df
 
+# Handle the default Financial Statements dataset
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     df = load_financial_statements()
@@ -139,8 +149,8 @@ elif dataset_choice == "Default Financial Statements":
     labels = df['Company']  # Use company name for hover name
     features = numeric_df
 
+# Handle the uploaded TSV file
 else:
-    # Upload the TSV file
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
     
     if uploaded_file is not None:
@@ -148,9 +158,6 @@ else:
         df = pd.read_csv(uploaded_file, sep='\t')
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))  # Display first 10 lines of the uploaded data
-
-        # Ensure all column names are strings
-        df.columns = df.columns.astype(str)
 
         # Use only numerical data for analysis
         numeric_df = df.select_dtypes(include=[np.number])
@@ -173,12 +180,12 @@ if 'features' in locals() and 'labels' in locals():
 
     if analysis_type == "UMAP":
         # Apply UMAP to reduce dimensions to 3D
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42, n_jobs=1)
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
         umap_3d_results = umap_3d.fit_transform(features)
 
         # Create a DataFrame for the UMAP results
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels.astype(str)
+        result_df['Label'] = labels
 
         # Plotting with Plotly
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
@@ -195,7 +202,7 @@ if 'features' in locals() and 'labels' in locals():
 
         # Create a DataFrame for the PCA results
         result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels.astype(str)
+        result_df['Label'] = labels
 
         # Plotting with Plotly
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
@@ -207,7 +214,7 @@ if 'features' in locals() and 'labels' in locals():
 
     # Display the DataFrame for the analysis results
     st.write("### Analysis Results DataFrame")
-    st.dataframe(result_df.head(20))  # Display only the first 20 rows of the analysis results DataFrame
+    st.dataframe(result_df)  # Display the analysis results DataFrame
 
     # Display Plotly figure
     st.plotly_chart(fig)
