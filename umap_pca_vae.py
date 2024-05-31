@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from keras.layers import Input, Dense, Lambda
 from keras.models import Model
 from keras import backend as K
-from keras.losses import mse
+from keras.losses import mean_squared_error
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -209,7 +209,7 @@ if 'features' in locals() and 'labels' in locals():
 
         vae = Model(inputs, x_decoded_mean)
 
-        reconstruction_loss = mse(inputs, x_decoded_mean) * input_dim
+        reconstruction_loss = mean_squared_error(inputs, x_decoded_mean) * input_dim
         kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
         kl_loss = K.sum(kl_loss, axis=-1)
         kl_loss *= -0.5
