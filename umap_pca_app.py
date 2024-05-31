@@ -22,7 +22,7 @@ def load_digits_dataset():
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
     # Load the Fashion MNIST dataset from a CSV file
-    fashion_mnist_df = pd.read_csv('fashion-mnist_train.csv')
+    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
     # Reshape the image data
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
     # Add the target labels to the DataFrame
