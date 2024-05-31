@@ -34,15 +34,28 @@ def load_fashion_mnist_dataset():
 
 # Function to load the default Animal Descriptions dataset
 def load_animal_descriptions():
-    return pd.read_csv('animal_descriptions.csv')
+    df = pd.read_csv('animal_descriptions.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
+    labels = df["Animal"]
+    return tfidf_df, labels
 
 # Function to load the default NAICS codes dataset
 def load_naics_codes():
-    return pd.read_csv('naics_codes.csv')
+    df = pd.read_csv('naics_codes.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
+    labels = df["Description"]
+    return tfidf_df, labels
 
 # Function to load the default Financial Statements dataset
 def load_financial_statements():
-    return pd.read_csv('financial_statements.csv')
+    df = pd.read_csv('financial_statements.csv')
+    numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['Company']
+    return numeric_df, labels
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -87,48 +100,21 @@ elif dataset_choice == "Default Fashion MNIST":
 
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
-    df = load_animal_descriptions()
+    features, labels = load_animal_descriptions()
     st.write("### Animal Descriptions Dataset")
-    st.write(df.head(20))
-
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
-    st.write("### TF-IDF Vectors for Each Paragraph")
-    st.write(tfidf_df.head(20))
-
-    df = tfidf_df
-    labels = df.index
-    features = df
+    st.write(features.head(20))
 
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
-    df = load_naics_codes()
+    features, labels = load_naics_codes()
     st.write("### NAICS Codes Dataset")
-    st.write(df.head(20))
-
-    labels = df['Description']
-
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
-    st.write("### TF-IDF Vectors for Each NAICS Description")
-    st.write(tfidf_df.head(20))
-
-    df = tfidf_df
-    features = df
+    st.write(features.head(20))
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
-    df = load_financial_statements()
+    features, labels = load_financial_statements()
     st.write("### Financial Statements Dataset")
-    st.write(df.head(20))
-
-    numeric_df = df.select_dtypes(include=[np.number])
-    labels = df['Company']
-    features = numeric_df
+    st.write(features.head(20))
 
 else:
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
