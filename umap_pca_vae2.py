@@ -47,7 +47,7 @@ def load_naics_codes():
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
-    labels = df["Description"]
+    labels = df["NAICS Code"]
     return tfidf_df, labels
 
 # Function to load the default Financial Statements dataset with paragraphs of text data
@@ -56,7 +56,7 @@ def load_financial_statements():
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-    labels = df["Description"]
+    labels = df["Company"]
     return tfidf_df, labels
 
 # Streamlit App
