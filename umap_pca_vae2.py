@@ -104,7 +104,7 @@ elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
     features, labels, df = load_animal_descriptions()
     st.write("### Animal Descriptions Dataset")
-    st.write(df.head(20))
+    st.write(df)
 
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
@@ -172,7 +172,7 @@ if 'features' in locals() and 'labels' in locals():
         vae_3d_results = vae_latent_space[:, :3]
 
         result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
+        result_df['Label'] = labels.reset_index(drop=True)
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
