@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
-from keras.layers import Input, Dense, Lambda
+from keras.layers import Input, Dense, Lambda, Layer
 from keras.models import Model
 from keras import backend as K
 from keras.losses import mean_squared_error
@@ -193,14 +193,15 @@ if 'features' in locals() and 'labels' in locals():
         z_mean = Dense(latent_dim)(h)
         z_log_var = Dense(latent_dim)(h)
 
-        def sampling(args):
-            z_mean, z_log_var = args
-            batch = K.shape(z_mean)[0]
-            dim = K.int_shape(z_mean)[1]
-            epsilon = K.random_normal(shape=(batch, dim))
-            return z_mean + K.exp(0.5 * z_log_var) * epsilon
+        class Sampling(Layer):
+            def call(self, inputs):
+                z_mean, z_log_var = inputs
+                batch = K.shape(z_mean)[0]
+                dim = K.int_shape(z_mean)[1]
+                epsilon = K.random_normal(shape=(batch, dim))
+                return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
-        z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])
+        z = Sampling()([z_mean, z_log_var])
 
         decoder_h = Dense(128, activation='relu')
         decoder_mean = Dense(input_dim, activation='sigmoid')
