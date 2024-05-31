@@ -127,4 +127,62 @@ else:
 
         numeric_df = df.select_dtypes(include=[np.number])
 
-        if 'label'
+        if 'label' in df.columns:
+            labels = df['label']
+            features = numeric_df.drop(columns=['label'])
+        elif 'Animal' in df.columns:
+            labels = df['Animal']
+            features = numeric_df
+        else:
+            labels = df.index
+            features = numeric_df
+
+if 'features' in locals() and 'labels' in locals():
+    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
+
+    if analysis_type == "UMAP":
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+        umap_3d_results = umap_3d.fit_transform(features)
+
+        result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D UMAP Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    elif analysis_type == "PCA":
+        pca_3d = PCA(n_components=3)
+        pca_3d_results = pca_3d.fit_transform(features)
+
+        result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D PCA Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    elif analysis_type == "VAE":
+        vae_3d_results = vae_latent_space[:, :3]
+
+        result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D VAE Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    st.write("### Analysis Results DataFrame")
+    st.dataframe(result_df)
+    st.plotly_chart(fig)
+else:
+    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
