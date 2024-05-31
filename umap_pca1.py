@@ -149,6 +149,9 @@ else:
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))  # Display first 10 lines of the uploaded data
 
+        # Ensure all column names are strings
+        df.columns = df.columns.astype(str)
+
         # Use only numerical data for analysis
         numeric_df = df.select_dtypes(include=[np.number])
 
@@ -170,12 +173,12 @@ if 'features' in locals() and 'labels' in locals():
 
     if analysis_type == "UMAP":
         # Apply UMAP to reduce dimensions to 3D
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42, n_jobs=1)
         umap_3d_results = umap_3d.fit_transform(features)
 
         # Create a DataFrame for the UMAP results
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
+        result_df['Label'] = labels.astype(str)
 
         # Plotting with Plotly
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
@@ -192,7 +195,7 @@ if 'features' in locals() and 'labels' in locals():
 
         # Create a DataFrame for the PCA results
         result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
+        result_df['Label'] = labels.astype(str)
 
         # Plotting with Plotly
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
@@ -204,7 +207,7 @@ if 'features' in locals() and 'labels' in locals():
 
     # Display the DataFrame for the analysis results
     st.write("### Analysis Results DataFrame")
-    st.dataframe(result_df)  # Display the analysis results DataFrame
+    st.dataframe(result_df.head(20))  # Display only the first 20 rows of the analysis results DataFrame
 
     # Display Plotly figure
     st.plotly_chart(fig)
