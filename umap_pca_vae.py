@@ -9,21 +9,14 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
 
-# Function to load pre-trained VAE encoder and decoder
+# Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
-    decoder = load_model('vae_decoder.keras')
     latent_space = np.load('latent_space.npy')
-    return encoder, decoder, latent_space
+    return encoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
-
-# Function to generate images from latent space
-def generate_images_from_latent_space(decoder, num_images=5, img_shape=(28, 28)):
-    random_latent_vectors = np.random.normal(size=(num_images, vae_latent_space.shape[1]))
-    generated_images = decoder.predict(random_latent_vectors)
-    return generated_images.reshape(num_images, *img_shape)
+vae_encoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -59,7 +52,6 @@ dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fa
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
     df, images = load_digits_dataset()
-    img_shape = (8, 8)
     st.write("### Contents of the Digits Dataset")
     st.write(df.head(20))
 
@@ -78,7 +70,6 @@ if dataset_choice == "Default Digits":
 elif dataset_choice == "Default Fashion MNIST":
     st.write("Using the default Fashion MNIST dataset.")
     df, images = load_fashion_mnist_dataset()
-    img_shape = (28, 28)
     st.write("### Contents of the Fashion MNIST Dataset")
     st.write(df.head(20))
 
@@ -201,16 +192,6 @@ if 'features' in locals() and 'labels' in locals():
                           scene=dict(xaxis_title='Component 1',
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
-
-        # Generate and display digits
-        if st.checkbox("Generate and display digits from latent space"):
-            generated_images = generate_images_from_latent_space(vae_decoder, img_shape=img_shape)
-            st.write("### Generated Digits from Latent Space")
-            fig, axes = plt.subplots(1, len(generated_images), figsize=(10, 3))
-            for i, img in enumerate(generated_images):
-                axes[i].imshow(img, cmap='gray')
-                axes[i].axis('off')
-            st.pyplot(fig)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
