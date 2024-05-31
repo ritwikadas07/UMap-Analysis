@@ -9,14 +9,21 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
 
-# Function to load pre-trained VAE encoder and latent space
+# Function to load pre-trained VAE encoder and decoder
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
+    decoder = load_model('vae_decoder.keras')
     latent_space = np.load('latent_space.npy')
-    return encoder, latent_space
+    return encoder, decoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
+
+# Function to generate images from latent space
+def generate_images_from_latent_space(decoder, num_images=5):
+    random_latent_vectors = np.random.normal(size=(num_images, 3))
+    generated_images = decoder.predict(random_latent_vectors)
+    return generated_images
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -192,6 +199,16 @@ if 'features' in locals() and 'labels' in locals():
                           scene=dict(xaxis_title='Component 1',
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
+
+        # Generate and display digits
+        if st.checkbox("Generate and display digits from latent space"):
+            generated_images = generate_images_from_latent_space(vae_decoder)
+            st.write("### Generated Digits from Latent Space")
+            fig, axes = plt.subplots(1, len(generated_images), figsize=(10, 3))
+            for i, img in enumerate(generated_images):
+                axes[i].imshow(img.reshape(28, 28), cmap='gray')
+                axes[i].axis('off')
+            st.pyplot(fig)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
