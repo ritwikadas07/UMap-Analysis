@@ -39,7 +39,7 @@ def load_animal_descriptions():
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
     labels = df["Animal"]
-    return tfidf_df, labels
+    return tfidf_df, labels, df
 
 # Function to load the default NAICS codes dataset with paragraphs of text data
 def load_naics_codes():
@@ -48,7 +48,7 @@ def load_naics_codes():
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
     labels = df["NAICS Code"]
-    return tfidf_df, labels
+    return tfidf_df, labels, df
 
 # Function to load the default Financial Statements dataset with paragraphs of text data
 def load_financial_statements():
@@ -57,7 +57,7 @@ def load_financial_statements():
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
     labels = df["Company"]
-    return tfidf_df, labels
+    return tfidf_df, labels, df
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -102,21 +102,21 @@ elif dataset_choice == "Default Fashion MNIST":
 
 elif dataset_choice == "Default Animal Descriptions":
     st.write("Using the default Animal Descriptions dataset.")
-    features, labels = load_animal_descriptions()
+    features, labels, df = load_animal_descriptions()
     st.write("### Animal Descriptions Dataset")
-    st.write(features.head(20))
+    st.write(df.head(20))
 
 elif dataset_choice == "Default NAICS Codes":
     st.write("Using the default NAICS Codes dataset.")
-    features, labels = load_naics_codes()
+    features, labels, df = load_naics_codes()
     st.write("### NAICS Codes Dataset")
-    st.write(features.head(20))
+    st.write(df.head(20))
 
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
-    features, labels = load_financial_statements()
+    features, labels, df = load_financial_statements()
     st.write("### Financial Statements Dataset")
-    st.write(features.head(20))
+    st.write(df.head(20))
 
 else:
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
