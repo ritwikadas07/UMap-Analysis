@@ -2,83 +2,70 @@ NAICS Code,Description
 1111,This industry comprises establishments primarily engaged in growing and harvesting oilseed and grain crops.
 1111,Establishments in this industry are focused on producing various types of oilseed and grain crops.
 1111,This sector includes businesses dedicated to cultivating oilseed and grain crops for commercial purposes.
-1111,Companies in this industry grow oilseed and grain crops for food, animal feed, and industrial uses.
-1111,Primary activities involve planting, nurturing, and harvesting oilseed and grain crops.
-
+1111,"Companies in this industry grow oilseed and grain crops for food, animal feed, and industrial uses."
+1111,"Primary activities involve planting, nurturing, and harvesting oilseed and grain crops."
 1112,This industry includes establishments primarily engaged in growing vegetables and melons.
 1112,Establishments in this sector focus on cultivating a variety of vegetables and melons for the market.
 1112,This industry covers farms that produce fresh vegetables and melons for local and export consumption.
 1112,Companies in this industry grow vegetables and melons using sustainable farming practices.
-1112,Primary activities include planting, growing, and harvesting various vegetables and melons.
-
+1112,"Primary activities include planting, growing, and harvesting various vegetables and melons."
 1113,This industry includes establishments primarily engaged in growing fruit and tree nuts.
 1113,Establishments in this sector focus on producing a variety of fruits and tree nuts.
 1113,This industry encompasses farms dedicated to the cultivation of fruit and nut-bearing trees.
 1113,Companies in this industry grow fruits and tree nuts for fresh consumption and processing.
-1113,Primary activities involve planting, maintaining, and harvesting fruit and nut crops.
-
+1113,"Primary activities involve planting, maintaining, and harvesting fruit and nut crops."
 1121,This industry includes establishments primarily engaged in raising cattle and calves.
 1121,Establishments in this sector focus on breeding and raising cattle and calves for meat and dairy production.
 1121,This industry covers farms dedicated to cattle and calf husbandry.
-1121,Companies in this industry raise cattle and calves for beef, milk, and other products.
-1121,Primary activities include breeding, feeding, and managing cattle and calves.
-
+1121,"Companies in this industry raise cattle and calves for beef, milk, and other products."
+1121,"Primary activities include breeding, feeding, and managing cattle and calves."
 1122,This industry includes establishments primarily engaged in raising hogs and pigs.
 1122,Establishments in this sector focus on breeding and raising hogs and pigs for pork production.
 1122,This industry encompasses farms that specialize in pig and hog husbandry.
 1122,Companies in this industry raise hogs and pigs for meat and other by-products.
-1122,Primary activities involve breeding, feeding, and managing hogs and pigs.
-
+1122,"Primary activities involve breeding, feeding, and managing hogs and pigs."
 1123,This industry comprises establishments primarily engaged in raising poultry and eggs.
 1123,Establishments in this sector focus on breeding and raising poultry for meat and egg production.
-1123,This industry includes farms that specialize in chicken, turkey, and other poultry husbandry.
+1123,"This industry includes farms that specialize in chicken, turkey, and other poultry husbandry."
 1123,Companies in this industry raise poultry and produce eggs for consumption.
-1123,Primary activities include breeding, feeding, and managing poultry and egg production.
-
+1123,"Primary activities include breeding, feeding, and managing poultry and egg production."
 1124,This industry includes establishments primarily engaged in raising sheep and goats.
-1124,Establishments in this sector focus on breeding and raising sheep and goats for meat, milk, and wool.
+1124,"Establishments in this sector focus on breeding and raising sheep and goats for meat, milk, and wool."
 1124,This industry encompasses farms dedicated to sheep and goat husbandry.
 1124,Companies in this industry raise sheep and goats for various agricultural products.
-1124,Primary activities involve breeding, feeding, and managing sheep and goats.
-
+1124,"Primary activities involve breeding, feeding, and managing sheep and goats."
 1125,This industry includes establishments primarily engaged in raising aquaculture and other animals.
-1125,Establishments in this sector focus on breeding and raising fish, shellfish, and other aquatic animals.
+1125,"Establishments in this sector focus on breeding and raising fish, shellfish, and other aquatic animals."
 1125,This industry encompasses farms that specialize in aquaculture and the husbandry of other non-traditional livestock.
 1125,Companies in this industry raise aquatic animals for food and other uses.
-1125,Primary activities involve breeding, feeding, and managing aquaculture and other animals.
-
+1125,"Primary activities involve breeding, feeding, and managing aquaculture and other animals."
 1129,This industry includes establishments primarily engaged in growing tobacco.
 1129,Establishments in this sector focus on the cultivation and harvesting of tobacco plants.
 1129,This industry encompasses farms dedicated to producing tobacco for various products.
-1129,Companies in this industry grow tobacco for cigarettes, cigars, and other tobacco products.
-1129,Primary activities include planting, growing, and harvesting tobacco plants.
-
+1129,"Companies in this industry grow tobacco for cigarettes, cigars, and other tobacco products."
+1129,"Primary activities include planting, growing, and harvesting tobacco plants."
 1131,This industry comprises establishments primarily engaged in logging.
 1131,Establishments in this sector focus on the cutting and transportation of timber.
 1131,This industry includes companies that specialize in logging and forestry services.
-1131,Companies in this industry harvest timber for construction, paper, and other products.
-1131,Primary activities involve cutting, processing, and transporting timber.
-
+1131,"Companies in this industry harvest timber for construction, paper, and other products."
+1131,"Primary activities involve cutting, processing, and transporting timber."
 1132,This industry includes establishments primarily engaged in timber tract operations.
 1132,Establishments in this sector focus on managing and cultivating timber tracts for harvest.
 1132,This industry encompasses companies that maintain timberlands for commercial logging.
 1132,Companies in this industry manage timber tracts for sustainable wood production.
-1132,Primary activities include planting, growing, and harvesting trees on timber tracts.
-
-1141,This industry includes establishments primarily engaged in fishing, hunting, and trapping.
-1141,Establishments in this sector focus on the capture and harvest of wild fish, game, and other animals.
-1141,This industry encompasses businesses involved in commercial fishing, hunting, and trapping activities.
-1141,Companies in this industry provide seafood, game meat, and furs from wild sources.
-1141,Primary activities include catching, processing, and selling fish, game, and other wild products.
-
+1132,"Primary activities include planting, growing, and harvesting trees on timber tracts."
+1141,"This industry includes establishments primarily engaged in fishing, hunting, and trapping."
+1141,"Establishments in this sector focus on the capture and harvest of wild fish, game, and other animals."
+1141,"This industry encompasses businesses involved in commercial fishing, hunting, and trapping activities."
+1141,"Companies in this industry provide seafood, game meat, and furs from wild sources."
+1141,"Primary activities include catching, processing, and selling fish, game, and other wild products."
 1151,This industry includes establishments primarily engaged in support activities for crop production.
-1151,Establishments in this sector provide services such as soil preparation, planting, and harvesting for crop farms.
+1151,"Establishments in this sector provide services such as soil preparation, planting, and harvesting for crop farms."
 1151,This industry encompasses companies that offer specialized support to crop-growing operations.
 1151,Companies in this industry assist with various stages of crop production.
-1151,Primary activities include providing labor, equipment, and expertise to support crop farmers.
-
+1151,"Primary activities include providing labor, equipment, and expertise to support crop farmers."
 1152,This industry includes establishments primarily engaged in support activities for animal production.
-1152,Establishments in this sector provide services such as breeding, feeding, and health management for animal farms.
+1152,"Establishments in this sector provide services such as breeding, feeding, and health management for animal farms."
 1152,This industry encompasses companies that offer specialized support to animal husbandry operations.
 1152,Companies in this industry assist with various stages of animal production.
-1152,Primary activities include providing labor, equipment, and expertise to support livestock farmers.
+1152,"Primary activities include providing labor, equipment, and expertise to support livestock farmers."
