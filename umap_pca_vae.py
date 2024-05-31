@@ -20,10 +20,10 @@ def load_vae_model():
 vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
 
 # Function to generate images from latent space
-def generate_images_from_latent_space(decoder, num_images=5, img_shape=(8, 8)):
-    random_latent_vectors = np.random.normal(size=(num_images, 3))
+def generate_images_from_latent_space(decoder, num_images=5, img_shape=(28, 28)):
+    random_latent_vectors = np.random.normal(size=(num_images, vae_latent_space.shape[1]))
     generated_images = decoder.predict(random_latent_vectors)
-    return generated_images.reshape(-1, *img_shape)
+    return generated_images.reshape(num_images, *img_shape)
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
