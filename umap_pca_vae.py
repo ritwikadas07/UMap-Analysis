@@ -7,10 +7,8 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
-from keras.layers import Input, Dense, Lambda, Layer
-from keras.models import Model
-from keras import backend as K
-from keras.losses import mean_squared_error
+import tensorflow as tf
+from tensorflow.keras.models import load_model
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -38,6 +36,10 @@ def load_naics_codes():
 def load_financial_statements():
     return pd.read_csv('financial_statements.csv')
 
+# Function to load pre-trained VAE model
+def load_vae_model(model_path):
+    return load_model(model_path)
+
 # Streamlit App
 st.title("3D Projection of Vectors")
 
@@ -60,6 +62,7 @@ if dataset_choice == "Default Digits":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
@@ -80,6 +83,7 @@ elif dataset_choice == "Default Fashion MNIST":
         axes[i].axis('off')
     st.pyplot(fig)
 
+    # Select only numeric data for further analysis
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
@@ -91,9 +95,11 @@ elif dataset_choice == "Default Animal Descriptions":
     st.write("### Animal Descriptions Dataset")
     st.write(df.head(20))
 
+    # Compute TF-IDF representation
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
 
+    # Convert TF-IDF matrix to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each Paragraph")
     st.write(tfidf_df.head(20))
@@ -111,9 +117,11 @@ elif dataset_choice == "Default NAICS Codes":
 
     labels = df['Description']
 
+    # Compute TF-IDF representation for descriptions
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
 
+    # Convert TF-IDF matrix to DataFrame
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
     st.write("### TF-IDF Vectors for Each NAICS Description")
     st.write(tfidf_df.head(20))
@@ -153,6 +161,7 @@ else:
             labels = df.index
             features = numeric_df
 
+# Perform analysis only if features and labels are set
 if 'features' in locals() and 'labels' in locals():
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
 
@@ -185,45 +194,11 @@ if 'features' in locals() and 'labels' in locals():
                                      zaxis_title='Component 3'))
 
     elif analysis_type == "VAE":
-        input_dim = features.shape[1]
-        latent_dim = 3
+        vae_model = load_vae_model('vae_model.h5')
+        vae_encoder = vae_model.get_layer('encoder')
+        vae_latent = vae_encoder.predict(features)
 
-        inputs = Input(shape=(input_dim,))
-        h = Dense(128, activation='relu')(inputs)
-        z_mean = Dense(latent_dim)(h)
-        z_log_var = Dense(latent_dim)(h)
-
-        class Sampling(Layer):
-            def call(self, inputs):
-                z_mean, z_log_var = inputs
-                batch = K.shape(z_mean)[0]
-                dim = K.int_shape(z_mean)[1]
-                epsilon = K.random_normal(shape=(batch, dim))
-                return z_mean + K.exp(0.5 * z_log_var) * epsilon
-
-        z = Sampling()([z_mean, z_log_var])
-
-        decoder_h = Dense(128, activation='relu')
-        decoder_mean = Dense(input_dim, activation='sigmoid')
-        h_decoded = decoder_h(z)
-        x_decoded_mean = decoder_mean(h_decoded)
-
-        vae = Model(inputs, x_decoded_mean)
-
-        reconstruction_loss = mean_squared_error(inputs, x_decoded_mean) * input_dim
-        kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
-        kl_loss = K.sum(kl_loss, axis=-1)
-        kl_loss *= -0.5
-        vae_loss = K.mean(reconstruction_loss + kl_loss)
-        vae.add_loss(vae_loss)
-        vae.compile(optimizer='rmsprop')
-        
-        vae.fit(features, epochs=50, batch_size=32, verbose=0)
-
-        encoder = Model(inputs, z_mean)
-        vae_results = encoder.predict(features)
-
-        result_df = pd.DataFrame(vae_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df = pd.DataFrame(vae_latent, columns=['Component 1', 'Component 2', 'Component 3'])
         result_df['Label'] = labels
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label')
@@ -233,16 +208,15 @@ if 'features' in locals() and 'labels' in locals():
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        # Display generated digits in the latent space
-        if dataset_choice == "Default Digits":
-            st.write("### Generated Digits in the Latent Space")
-            decoded_imgs = vae.predict(features)
-            fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-            for i in range(5):
-                axes[i].imshow(decoded_imgs[i].reshape(8, 8), cmap='gray')
-                axes[i].set_title(f"Generated: {labels[i]}")
-                axes[i].axis('off')
-            st.pyplot(fig)
+        # Optionally, display generated images in the latent space
+        st.write("### Generated Images in the Latent Space")
+        fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+        for i in range(5):
+            decoded_img = vae_model.get_layer('decoder')(vae_latent[i].reshape(1, -1)).numpy().reshape(28, 28)
+            axes[i].imshow(decoded_img, cmap='gray')
+            axes[i].set_title(f"Label: {labels.iloc[i]}")
+            axes[i].axis('off')
+        st.pyplot(fig)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
