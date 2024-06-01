@@ -214,30 +214,6 @@ if 'features' in locals() and 'labels' in locals():
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        # Checkbox to generate digits
-        generate_digits = st.checkbox("Generate Digits in Latent Space")
-
-        if generate_digits:
-            # Display generated digits
-            generated_digits = vae_encoder.predict(features)
-            generated_digits = np.array(generated_digits)
-
-            st.write(f"Generated digits shape: {generated_digits.shape}")
-
-            # Assuming the generated digits should be reshaped to (8, 8)
-            try:
-                generated_digits = generated_digits.reshape(-1, 8, 8)
-            except ValueError as e:
-                st.write(f"Error in reshaping: {e}")
-
-            st.write("### Generated Digits in the Latent Space")
-            fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-            for i in range(5):
-                axes[i].imshow(generated_digits[i], cmap='gray')
-                axes[i].set_title(f"Label: {labels[i]}")
-                axes[i].axis('off')
-            st.pyplot(fig)
-
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
     st.plotly_chart(fig)
