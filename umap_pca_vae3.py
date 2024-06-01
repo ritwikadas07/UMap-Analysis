@@ -199,7 +199,7 @@ if 'features' in locals() and 'labels' in locals():
         # Add jitter to spread out the data points
         jitter_strength = 0.01
         result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
-        result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+        result_df['Component 2'] += np.random.normal(0, jitter_strength, size[result_df.shape[0]])
         result_df['Component 3'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
 
         # Deduplicate labels to show each label only once
@@ -213,6 +213,16 @@ if 'features' in locals() and 'labels' in locals():
                           scene=dict(xaxis_title='Component 1',
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
+
+        # Display generated digits
+        generated_digits = vae_encoder.predict(features)
+        st.write("### Generated Digits in the Latent Space")
+        fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+        for i in range(5):
+            axes[i].imshow(generated_digits[i].reshape(8, 8), cmap='gray')
+            axes[i].set_title(f"Label: {labels[i]}")
+            axes[i].axis('off')
+        st.pyplot(fig)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
