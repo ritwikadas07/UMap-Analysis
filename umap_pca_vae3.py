@@ -220,10 +220,15 @@ if 'features' in locals() and 'labels' in locals():
         if generate_digits:
             # Display generated digits
             generated_digits = vae_encoder.predict(features)
+            generated_digits = np.array(generated_digits)
+
             st.write(f"Generated digits shape: {generated_digits.shape}")
 
             # Assuming the generated digits should be reshaped to (8, 8)
-            generated_digits = generated_digits.reshape(-1, 8, 8)
+            try:
+                generated_digits = generated_digits.reshape(-1, 8, 8)
+            except ValueError as e:
+                st.write(f"Error in reshaping: {e}")
 
             st.write("### Generated Digits in the Latent Space")
             fig, axes = plt.subplots(1, 5, figsize=(10, 3))
