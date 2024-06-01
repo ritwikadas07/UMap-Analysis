@@ -220,10 +220,15 @@ if 'features' in locals() and 'labels' in locals():
         if generate_digits:
             # Display generated digits
             generated_digits = vae_encoder.predict(features)
+            st.write(f"Generated digits shape: {generated_digits.shape}")
+
+            # Assuming the generated digits should be reshaped to (8, 8)
+            generated_digits = generated_digits.reshape(-1, 8, 8)
+
             st.write("### Generated Digits in the Latent Space")
             fig, axes = plt.subplots(1, 5, figsize=(10, 3))
             for i in range(5):
-                axes[i].imshow(generated_digits[i].reshape(8, 8), cmap='gray')
+                axes[i].imshow(generated_digits[i], cmap='gray')
                 axes[i].set_title(f"Label: {labels[i]}")
                 axes[i].axis('off')
             st.pyplot(fig)
