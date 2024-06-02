@@ -29,14 +29,14 @@ def load_digits_dataset():
 
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
+    fashion_mnist_df = pd.read_csv('/mnt/data/fashion-mnist_train_reduced.csv')
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
     return fashion_mnist_df, images
 
 # Function to load the default Animal Descriptions dataset
 def load_animal_descriptions():
-    df = pd.read_csv('animal_descriptions.csv')
+    df = pd.read_csv('/mnt/data/animal_descriptions.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
@@ -45,7 +45,7 @@ def load_animal_descriptions():
 
 # Function to load the default NAICS codes dataset with random samples of text data
 def load_naics_codes():
-    df = pd.read_csv('naics_codes_sampled.csv')
+    df = pd.read_csv('/mnt/data/naics_codes_sampled.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -54,7 +54,7 @@ def load_naics_codes():
 
 # Function to load the default Financial Statements dataset with unique companies from the same time period
 def load_financial_statements():
-    df = pd.read_csv('financial_statements_filtered.csv')
+    df = pd.read_csv('/mnt/data/financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
@@ -91,7 +91,7 @@ def analyze_and_plot(features, labels, analysis_type, title, colormap):
     result_df = pd.DataFrame(results, columns=['Component 1', 'Component 2', 'Component 3'])
     result_df['Label'] = labels
 
-    fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=colormap)
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=colormap)
     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
     fig.update_layout(title=title,
                       scene=dict(xaxis_title='Component 1',
@@ -104,12 +104,38 @@ def analyze_and_plot(features, labels, analysis_type, title, colormap):
 # Function to reconstruct images from latent space and visualize them
 def reconstruct_and_visualize(latent_space, decoder, title):
     reconstructed_images = decoder.predict(latent_space)
-    reconstructed_images = reconstructed_images.reshape(-1, 28, 28)  # Assuming image size is 28x28
+    # Ensure the reshaping matches the correct dimensions
+    if reconstructed_images.shape[1] == 784:  # For Digits dataset (28x28)
+        reconstructed_images = reconstructed_images.reshape(-1, 28, 28)
+    elif reconstructed_images.shape[1] == 784:  # For Fashion MNIST dataset (28x28)
+        reconstructed_images = reconstructed_images.reshape(-1, 28, 28)
+    else:
+        raise ValueError("Unexpected shape for reconstructed images")
+
     fig, axes = plt.subplots(1, 5, figsize=(10, 3))
     for i in range(5):
         axes[i].imshow(reconstructed_images[i], cmap='gray')
         axes[i].axis('off')
     plt.suptitle(title)
+    st.pyplot(fig)
+
+# Function to generate a lattice of points in the latent space and decode them
+def generate_lattice_and_decode(decoder, grid_size=20):
+    # Create a grid of points in the latent space
+    grid_x = np.linspace(-2, 2, grid_size)
+    grid_y = np.linspace(-2, 2, grid_size)
+    grid = np.array([[x, y] for x in grid_x for y in grid_y])
+
+    # Decode the grid points
+    decoded_images = decoder.predict(grid).reshape(grid_size, grid_size, 28, 28)
+
+    # Visualize the decoded images in a grid
+    fig, axes = plt.subplots(grid_size, grid_size, figsize=(10, 10))
+    for i in range(grid_size):
+        for j in range(grid_size):
+            axes[i, j].imshow(decoded_images[i, j], cmap='gray')
+            axes[i, j].axis('off')
+    plt.suptitle('Lattice of Decoded Images from VAE Latent Space')
     st.pyplot(fig)
 
 # Streamlit App
@@ -180,7 +206,7 @@ if 'features' in locals() and 'labels' in locals():
 
     result_df = analyze_and_plot(features, labels, analysis_type, f"3D {analysis_type} Projection of Vectors", colormap)
     
-    if analysis_type == "VAE":
+    if analysis_type == "VAE" and dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
         vae_2d_results = vae_latent_space[:, :2]
         vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
         vae_2d_df['Label'] = labels
@@ -194,6 +220,10 @@ if 'features' in locals() and 'labels' in locals():
         # Reconstruct images from the VAE latent space
         st.write("### Reconstructed Images from VAE Latent Space")
         reconstruct_and_visualize(vae_latent_space[:5], vae_decoder, "Reconstructed Images from VAE Latent Space")
+
+        # Generate and display lattice of decoded images
+        st.write("### Lattice of Decoded Images from VAE Latent Space")
+        generate_lattice_and_decode(vae_decoder)
 
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
