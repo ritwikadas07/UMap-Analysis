@@ -13,12 +13,11 @@ import umap.umap_ as umap
 # Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
-    decoder = load_model('vae_decoder.keras')
     latent_space = np.load('latent_space.npy')
-    return encoder, decoder, latent_space
+    return encoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -43,17 +42,16 @@ def load_animal_descriptions():
     labels = df["Animal"]
     return tfidf_df, labels, df
 
-# Function to load the default NAICS codes dataset with random samples of text data
+# Function to load the NAICS codes dataset
 def load_naics_codes():
     df = pd.read_csv('naics_codes_sampled.csv')
-    df = df.dropna(subset=['NAICS Code', 'Description'])  # Drop rows with null NAICS codes or descriptions
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
     labels = df["NAICS Code"]
     return tfidf_df, labels, df
 
-# Function to load the default Financial Statements dataset with unique companies from the same time period
+# Function to load the Financial Statements dataset
 def load_financial_statements():
     df = pd.read_csv('financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
@@ -61,65 +59,6 @@ def load_financial_statements():
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
     labels = df["Company"]
     return tfidf_df, labels, df
-
-# Function to visualize images
-def visualize_images(images, labels, title):
-    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-    for i in range(5):
-        axes[i].imshow(images[i], cmap='gray')
-        axes[i].set_title(f"Label: {labels[i]}")
-        axes[i].axis('off')
-    plt.suptitle(title)
-    st.pyplot(fig)
-
-# Function to perform analysis and plot results
-def analyze_and_plot(features, labels, analysis_type, title, colormap):
-    if analysis_type == "UMAP":
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-        results = umap_3d.fit_transform(features)
-    elif analysis_type == "PCA":
-        pca_3d = PCA(n_components=3)
-        results = pca_3d.fit_transform(features)
-    elif analysis_type == "VAE":
-        results = vae_latent_space[:, :3]
-        scaler = StandardScaler()
-        results = scaler.fit_transform(results)
-        jitter_strength = 0.01
-        results += np.random.normal(0, jitter_strength, size=results.shape)
-    else:
-        raise ValueError("Invalid analysis type")
-
-    result_df = pd.DataFrame(results, columns=['Component 1', 'Component 2', 'Component 3'])
-    result_df['Label'] = labels
-
-    fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=colormap)
-    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-    fig.update_layout(title=title,
-                      scene=dict(xaxis_title='Component 1',
-                                 yaxis_title='Component 2',
-                                 zaxis_title='Component 3'))
-    st.plotly_chart(fig)
-    
-    return result_df
-
-# Function to generate a lattice of points in the latent space and decode them
-def generate_lattice_and_decode(decoder, grid_size=20):
-    # Create a grid of points in the latent space
-    grid_x = np.linspace(-2, 2, grid_size)
-    grid_y = np.linspace(-2, 2, grid_size)
-    grid = np.array([[x, y] for x in grid_x for y in grid_y])
-
-    # Decode the grid points
-    decoded_images = decoder.predict(grid).reshape(grid_size, grid_size, 28, 28)
-
-    # Visualize the decoded images in a grid
-    fig, axes = plt.subplots(grid_size, grid_size, figsize=(10, 10))
-    for i in range(grid_size):
-        for j in range(grid_size):
-            axes[i, j].imshow(decoded_images[i, j], cmap='gray')
-            axes[i, j].axis('off')
-    plt.suptitle('Lattice of Decoded Images from VAE Latent Space')
-    st.pyplot(fig)
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -131,8 +70,15 @@ if dataset_choice == "Default Digits":
     df, images = load_digits_dataset()
     st.write("### Contents of the Digits Dataset")
     st.write(df.head(20))
+
     st.write("### Sample Images from the Digits Dataset")
-    visualize_images(images, df['label'], "Sample Images from the Digits Dataset")
+    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+    for i in range(5):
+        axes[i].imshow(images[i], cmap='gray')
+        axes[i].set_title(f"Label: {df['label'][i]}")
+        axes[i].axis('off')
+    st.pyplot(fig)
+
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
@@ -142,8 +88,15 @@ elif dataset_choice == "Default Fashion MNIST":
     df, images = load_fashion_mnist_dataset()
     st.write("### Contents of the Fashion MNIST Dataset")
     st.write(df.head(20))
+
     st.write("### Sample Images from the Fashion MNIST Dataset")
-    visualize_images(images, df['label'], "Sample Images from the Fashion MNIST Dataset")
+    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+    for i in range(5):
+        axes[i].imshow(images[i], cmap='gray')
+        axes[i].set_title(f"Label: {df['label'][i]}")
+        axes[i].axis('off')
+    st.pyplot(fig)
+
     numeric_df = df.select_dtypes(include=[np.number])
     labels = df['label']
     features = numeric_df.drop(columns=['label'])
@@ -172,7 +125,9 @@ else:
         df = pd.read_csv(uploaded_file, sep='\t')
         st.write("### First 10 Lines of the Uploaded Data")
         st.write(df.head(10))
+
         numeric_df = df.select_dtypes(include=[np.number])
+
         if 'label' in df.columns:
             labels = df['label']
             features = numeric_df.drop(columns=['label'])
@@ -185,25 +140,85 @@ else:
 
 if 'features' in locals() and 'labels' in locals():
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
-    colormap = st.selectbox("Choose a colormap", ["Viridis", "Plasma", "Inferno", "Magma", "Cividis"])
 
-    result_df = analyze_and_plot(features, labels, analysis_type, f"3D {analysis_type} Projection of Vectors", colormap)
-    
-    if analysis_type == "VAE" and dataset_choice in ["Default Digits", "Default Fashion MNIST", "Default NAICS Codes"]:
-        vae_2d_results = vae_latent_space[:, :2]
-        vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
-        vae_2d_df['Label'] = labels
-        fig2 = px.scatter(vae_2d_df, x='Dim 1', y='Dim 2', color='Label', hover_name='Label', color_continuous_scale=colormap)
-        fig2.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-        fig2.update_layout(title='2D VAE Latent Space',
-                           xaxis_title='Dim 1',
-                           yaxis_title='Dim 2')
-        st.plotly_chart(fig2)
+    color_map_choice = st.selectbox("Select color map", ["Viridis", "Cividis", "Plasma", "Inferno"])
+    color_map = color_map_choice.lower()
 
-        # Generate and display lattice of decoded images
-        st.write("### Lattice of Decoded Images from VAE Latent Space")
-        generate_lattice_and_decode(vae_decoder)
+    if analysis_type == "UMAP":
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+        umap_3d_results = umap_3d.fit_transform(features)
 
+        result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        # Deduplicate labels to show each label only once
+        unique_labels = labels.drop_duplicates().reset_index(drop=True)
+        result_df['Label'] = result_df['Label'].astype('category').cat.codes
+        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D UMAP Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    elif analysis_type == "PCA":
+        pca_3d = PCA(n_components=3)
+        pca_3d_results = pca_3d.fit_transform(features)
+
+        result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        # Deduplicate labels to show each label only once
+        unique_labels = labels.drop_duplicates().reset_index(drop=True)
+        result_df['Label'] = result_df['Label'].astype('category').cat.codes
+        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D PCA Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    elif analysis_type == "VAE":
+        vae_3d_results = vae_latent_space[:, :3]
+
+        # Ensure labels are correctly aligned
+        labels = labels.reset_index(drop=True)
+
+        result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels
+
+        # Filter out rows with NaN labels
+        result_df = result_df.dropna(subset=['Label'])
+        result_df['Label'] = result_df['Label'].astype(str)
+
+        # Normalize the data to spread out the points
+        scaler = StandardScaler()
+        result_df[['Component 1', 'Component 2', 'Component 3']] = scaler.fit_transform(result_df[['Component 1', 'Component 2', 'Component 3']])
+
+        # Add jitter to spread out the data points
+        jitter_strength = 0.01
+        result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+        result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+        result_df['Component 3'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+
+        # Deduplicate labels to show each label only once
+        unique_labels = labels.drop_duplicates().reset_index(drop=True)
+        result_df['Label'] = result_df['Label'].astype('category').cat.codes
+        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
+
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D VAE Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
+
+    st.write("### Analysis Results DataFrame")
+    st.dataframe(result_df)
+    st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
-
