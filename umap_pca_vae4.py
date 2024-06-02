@@ -194,7 +194,7 @@ if 'features' in locals() and 'labels' in locals():
         scaler = StandardScaler()
         result_df[['Component 1', 'Component 2', 'Component 3']] = scaler.fit_transform(result_df[['Component 1', 'Component 2', 'Component 3']])
 
-                # Add jitter to spread out the data points
+        # Add jitter to spread out the data points
         jitter_strength = 0.01
         result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
         result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
@@ -222,7 +222,20 @@ if 'features' in locals() and 'labels' in locals():
                 for j, xi in enumerate(grid_x):
                     z_sample = np.array([[xi, yi]])
                     if dataset_choice == "Default Digits":
-                        z_sample = np.array([[xi, yi, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+                        z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
+                        z_decoded = vae_decoder.predict(z_sample)
+                        digit = z_decoded[0].reshape(8, 8)
+                        axes[i, j].imshow(digit, cmap="gray")
                     else:
-                        z_sample = np.array([[xi, yi, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                        z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
+                        z_decoded = vae_decoder.predict(z_sample)
+                        fashion = z_decoded[0].reshape(28, 28)
+                        axes[i, j].imshow(fashion, cmap="gray")
+                    axes[i, j].axis('off')
+
+            plt.subplots_adjust(wspace=0.05, hspace=0.05)
+            st.pyplot(fig)
+
+else:
+    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
 
