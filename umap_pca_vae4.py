@@ -102,12 +102,15 @@ def analyze_and_plot(features, labels, analysis_type, title, colormap):
     return result_df
 
 # Function to reconstruct images from latent space and visualize them
-# Function to reconstruct images from latent space and visualize them
 def reconstruct_and_visualize(latent_space, decoder, title):
     reconstructed_images = decoder.predict(latent_space)
     # Ensure the reshaping matches the correct dimensions
-    if reconstructed_images.shape[-1] == 784:  # For Digits and Fashion MNIST datasets (28x28)
+    expected_shapes = [(784,), (28, 28)]
+    if reconstructed_images.shape[1] == 784:
         reconstructed_images = reconstructed_images.reshape(-1, 28, 28)
+    elif reconstructed_images.shape[1] == 64:
+        reconstructed_images = reconstructed_images.reshape(-1, 8, 8)
+        st.write("The reconstructed images have a shape of 8x8, which might be incorrect.")
     else:
         st.write(f"Unexpected shape for reconstructed images: {reconstructed_images.shape}")
         raise ValueError("Unexpected shape for reconstructed images")
@@ -118,7 +121,6 @@ def reconstruct_and_visualize(latent_space, decoder, title):
         axes[i].axis('off')
     plt.suptitle(title)
     st.pyplot(fig)
-
 
 # Function to generate a lattice of points in the latent space and decode them
 def generate_lattice_and_decode(decoder, grid_size=20):
