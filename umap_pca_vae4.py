@@ -53,16 +53,13 @@ def load_naics_codes():
 
 # Function to load the financial statements dataset
 def load_financial_statements():
-    try:
-        df = pd.read_csv('financial_statements_filtered.csv', error_bad_lines=False, warn_bad_lines=True)
-        vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(df["Description"])
-        tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-        labels = df["Company"]
-        return tfidf_df, labels, df
-    except pd.errors.ParserError as e:
-        st.error(f"Error parsing CSV file: {e}")
-        return None, None, None
+    df = pd.read_csv('financial_statements_filtered.csv', error_bad_lines=False, warn_bad_lines=True)
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
+    labels = df["Company"]
+    return tfidf_df, labels, df
+    
 
 # Streamlit App
 st.title("3D Projection of Vectors")
