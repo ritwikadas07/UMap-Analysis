@@ -42,7 +42,7 @@ def load_animal_descriptions():
     labels = df["Animal"]
     return tfidf_df, labels, df
 
-# Function to load the NAICS codes dataset
+# Function to load the sampled NAICS codes dataset
 def load_naics_codes():
     df = pd.read_csv('naics_codes_sampled.csv')
     vectorizer = TfidfVectorizer()
@@ -51,7 +51,7 @@ def load_naics_codes():
     labels = df["NAICS Code"]
     return tfidf_df, labels, df
 
-# Function to load the Financial Statements dataset
+# Function to load the financial statements dataset
 def load_financial_statements():
     df = pd.read_csv('financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
@@ -63,7 +63,9 @@ def load_financial_statements():
 # Streamlit App
 st.title("3D Projection of Vectors")
 
-dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
+
+color_map = st.selectbox("Choose a color map", ["Viridis", "Cividis", "Plasma", "Inferno"])
 
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
@@ -107,8 +109,8 @@ elif dataset_choice == "Default Animal Descriptions":
     st.write("### Animal Descriptions Dataset")
     st.write(df)
 
-elif dataset_choice == "Default NAICS Codes":
-    st.write("Using the default NAICS Codes dataset.")
+elif dataset_choice == "Sampled NAICS Codes":
+    st.write("Using the sampled NAICS Codes dataset.")
     features, labels, df = load_naics_codes()
     st.write("### NAICS Codes Dataset")
     st.write(df.head(20))
@@ -140,9 +142,6 @@ else:
 
 if 'features' in locals() and 'labels' in locals():
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
-
-    color_map_choice = st.selectbox("Select color map", ["Viridis", "Cividis", "Plasma", "Inferno"])
-    color_map = color_map_choice.lower()
 
     if analysis_type == "UMAP":
         umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
