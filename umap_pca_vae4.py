@@ -53,12 +53,16 @@ def load_naics_codes():
 
 # Function to load the financial statements dataset
 def load_financial_statements():
-    df = pd.read_csv('financial_statements_filtered.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-    labels = df["Company"]
-    return tfidf_df, labels, df
+    try:
+        df = pd.read_csv('financial_statements_filtered.csv', error_bad_lines=False, warn_bad_lines=True)
+        vectorizer = TfidfVectorizer()
+        tfidf_matrix = vectorizer.fit_transform(df["Description"])
+        tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
+        labels = df["Company"]
+        return tfidf_df, labels, df
+    except pd.errors.ParserError as e:
+        st.error(f"Error parsing CSV file: {e}")
+        return None, None, None
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -118,8 +122,9 @@ elif dataset_choice == "Sampled NAICS Codes":
 elif dataset_choice == "Default Financial Statements":
     st.write("Using the default Financial Statements dataset.")
     features, labels, df = load_financial_statements()
-    st.write("### Financial Statements Dataset")
-    st.write(df.head(20))
+    if features is not None and labels is not None:
+        st.write("### Financial Statements Dataset")
+        st.write(df.head(20))
 
 else:
     uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
@@ -221,3 +226,4 @@ if 'features' in locals() and 'labels' in locals():
     st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
+
