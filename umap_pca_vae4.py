@@ -211,6 +211,16 @@ if 'features' in locals() and 'labels' in locals():
         st.dataframe(result_df)
         st.plotly_chart(fig)
 
+        # Plot 2D latent space before restoring the digits
+        fig, ax = plt.subplots(figsize=(10, 10))
+        scatter = ax.scatter(vae_latent_space[:, 0], vae_latent_space[:, 1], c=labels, cmap=color_map)
+        legend = ax.legend(*scatter.legend_elements(), title="Labels")
+        ax.add_artist(legend)
+        ax.set_title('2D Latent Space')
+        ax.set_xlabel('Latent Dimension 1')
+        ax.set_ylabel('Latent Dimension 2')
+        st.pyplot(fig)
+
         if dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
             # Create 2D lattice plot of the latent space
             n = 15  # Number of points along each dimension
@@ -221,14 +231,12 @@ if 'features' in locals() and 'labels' in locals():
             for i, yi in enumerate(grid_y):
                 for j, xi in enumerate(grid_x):
                     z_sample = np.array([[xi, yi]])
+                    z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
+                    z_decoded = vae_decoder.predict(z_sample)
                     if dataset_choice == "Default Digits":
-                        z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
-                        z_decoded = vae_decoder.predict(z_sample)
                         digit = z_decoded[0].reshape(8, 8)
                         axes[i, j].imshow(digit, cmap="gray")
                     else:
-                        z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
-                        z_decoded = vae_decoder.predict(z_sample)
                         fashion = z_decoded[0].reshape(28, 28)
                         axes[i, j].imshow(fashion, cmap="gray")
                     axes[i, j].axis('off')
