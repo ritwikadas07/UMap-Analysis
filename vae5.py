@@ -54,16 +54,12 @@ def load_naics_codes():
 
 # Function to load the financial statements dataset
 def load_financial_statements():
-    try:
-        df = pd.read_csv('financial_statements_filtered.csv', error_bad_lines=False, warn_bad_lines=True)
-        vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(df["Description"])
-        tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-        labels = df["Company"]
-        return tfidf_df, labels, df
-    except pd.errors.ParserError as e:
-        st.error(f"Error parsing CSV file: {e}")
-        return None, None, None
+    df = pd.read_csv('financial_statements_filtered.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
+    labels = df["Company"]
+    return tfidf_df, labels, df
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -150,7 +146,7 @@ if 'features' in locals() and 'labels' in locals():
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
 
     if analysis_type == "UMAP":
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42, n_jobs=-1)
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
         umap_3d_results = umap_3d.fit_transform(features)
 
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
@@ -236,3 +232,4 @@ if 'features' in locals() and 'labels' in locals():
 
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
+
