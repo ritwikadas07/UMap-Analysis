@@ -144,4 +144,87 @@ st.title("3D Projection of Vectors")
 dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Default NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
 
 if dataset_choice == "Default Digits":
-    st.write("Using the default Dig
+    st.write("Using the default Digits dataset.")
+    df, images = load_digits_dataset()
+    st.write("### Contents of the Digits Dataset")
+    st.write(df.head(20))
+    st.write("### Sample Images from the Digits Dataset")
+    visualize_images(images, df['label'], "Sample Images from the Digits Dataset")
+    numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['label']
+    features = numeric_df.drop(columns=['label'])
+
+elif dataset_choice == "Default Fashion MNIST":
+    st.write("Using the default Fashion MNIST dataset.")
+    df, images = load_fashion_mnist_dataset()
+    st.write("### Contents of the Fashion MNIST Dataset")
+    st.write(df.head(20))
+    st.write("### Sample Images from the Fashion MNIST Dataset")
+    visualize_images(images, df['label'], "Sample Images from the Fashion MNIST Dataset")
+    numeric_df = df.select_dtypes(include=[np.number])
+    labels = df['label']
+    features = numeric_df.drop(columns=['label'])
+
+elif dataset_choice == "Default Animal Descriptions":
+    st.write("Using the default Animal Descriptions dataset.")
+    features, labels, df = load_animal_descriptions()
+    st.write("### Animal Descriptions Dataset")
+    st.write(df)
+
+elif dataset_choice == "Default NAICS Codes":
+    st.write("Using the default NAICS Codes dataset.")
+    features, labels, df = load_naics_codes()
+    st.write("### NAICS Codes Dataset")
+    st.write(df.head(20))
+
+elif dataset_choice == "Default Financial Statements":
+    st.write("Using the default Financial Statements dataset.")
+    features, labels, df = load_financial_statements()
+    st.write("### Financial Statements Dataset")
+    st.write(df.head(20))
+
+else:
+    uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file, sep='\t')
+        st.write("### First 10 Lines of the Uploaded Data")
+        st.write(df.head(10))
+        numeric_df = df.select_dtypes(include=[np.number])
+        if 'label' in df.columns:
+            labels = df['label']
+            features = numeric_df.drop(columns=['label'])
+        elif 'Animal' in df.columns:
+            labels = df['Animal']
+            features = numeric_df
+        else:
+            labels = df.index
+            features = numeric_df
+
+if 'features' in locals() and 'labels' in locals():
+    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
+    colormap = st.selectbox("Choose a colormap", ["Viridis", "Plasma", "Inferno", "Magma", "Cividis"])
+
+    result_df = analyze_and_plot(features, labels, analysis_type, f"3D {analysis_type} Projection of Vectors", colormap)
+    
+    if analysis_type == "VAE" and dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
+        vae_2d_results = vae_latent_space[:, :2]
+        vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
+        vae_2d_df['Label'] = labels
+        fig2 = px.scatter(vae_2d_df, x='Dim 1', y='Dim 2', color='Label', hover_name='Label', color_continuous_scale=colormap)
+        fig2.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig2.update_layout(title='2D VAE Latent Space',
+                           xaxis_title='Dim 1',
+                           yaxis_title='Dim 2')
+        st.plotly_chart(fig2)
+
+        # Reconstruct images from the VAE latent space
+        st.write("### Reconstructed Images from VAE Latent Space")
+        reconstruct_and_visualize(vae_latent_space[:5], vae_decoder, "Reconstructed Images from VAE Latent Space")
+
+        # Generate and display lattice of decoded images
+        st.write("### Lattice of Decoded Images from VAE Latent Space")
+        generate_lattice_and_decode(vae_decoder)
+
+else:
+    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
+
