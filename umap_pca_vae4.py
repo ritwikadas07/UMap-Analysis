@@ -190,7 +190,7 @@ if 'features' in locals() and 'labels' in locals():
     
     if analysis_type == "VAE" and dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
         vae_2d_results = vae_latent_space[:, :2]
-                vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
+        vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
         vae_2d_df['Label'] = labels
         fig2 = px.scatter(vae_2d_df, x='Dim 1', y='Dim 2', color='Label', hover_name='Label', color_continuous_scale=colormap)
         fig2.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
