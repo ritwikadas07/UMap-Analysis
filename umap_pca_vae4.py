@@ -10,15 +10,14 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
 
-# Function to load pre-trained VAE encoder and decoder
+# Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
-    decoder = load_model('vae_decoder.keras')  # Ensure you have the decoder model
     latent_space = np.load('latent_space.npy')
-    return encoder, decoder, latent_space
+    return encoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -54,16 +53,13 @@ def load_naics_codes():
 
 # Function to load the financial statements dataset
 def load_financial_statements():
-    try:
-        df = pd.read_csv('financial_statements_filtered.csv', error_bad_lines=False, warn_bad_lines=True)
-        vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(df["Description"])
-        tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-        labels = df["Company"]
-        return tfidf_df, labels, df
-    except pd.errors.ParserError as e:
-        st.error(f"Error parsing CSV file: {e}")
-        return None, None, None
+    df = pd.read_csv('financial_statements_filtered.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
+    labels = df["Company"]
+    return tfidf_df, labels, df
+    
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -150,7 +146,7 @@ if 'features' in locals() and 'labels' in locals():
     analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
 
     if analysis_type == "UMAP":
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42, n_jobs=-1)
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
         umap_3d_results = umap_3d.fit_transform(features)
 
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
@@ -207,43 +203,8 @@ if 'features' in locals() and 'labels' in locals():
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        st.write("### Analysis Results DataFrame")
-        st.dataframe(result_df)
-        st.plotly_chart(fig)
-
-        # Plot 2D latent space before restoring the digits
-        fig, ax = plt.subplots(figsize=(10, 10))
-        scatter = ax.scatter(vae_latent_space[:, 0], vae_latent_space[:, 1], c=labels, cmap=color_map)
-        legend = ax.legend(*scatter.legend_elements(), title="Labels")
-        ax.add_artist(legend)
-        ax.set_title('2D Latent Space')
-        ax.set_xlabel('Latent Dimension 1')
-        ax.set_ylabel('Latent Dimension 2')
-        st.pyplot(fig)
-
-        if dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
-            # Create 2D lattice plot of the latent space
-            n = 15  # Number of points along each dimension
-            grid_x = np.linspace(-3, 3, n)
-            grid_y = np.linspace(-3, 3, n)
-
-            fig, axes = plt.subplots(n, n, figsize=(10, 10), sharex=True, sharey=True)
-            for i, yi in enumerate(grid_y):
-                for j, xi in enumerate(grid_x):
-                    z_sample = np.array([[xi, yi]])
-                    z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
-                    z_decoded = vae_decoder.predict(z_sample)
-                    if dataset_choice == "Default Digits":
-                        digit = z_decoded[0].reshape(8, 8)
-                        axes[i, j].imshow(digit, cmap="gray")
-                    else:
-                        fashion = z_decoded[0].reshape(28, 28)
-                        axes[i, j].imshow(fashion, cmap="gray")
-                    axes[i, j].axis('off')
-
-            plt.subplots_adjust(wspace=0.05, hspace=0.05)
-            st.pyplot(fig)
-
+    st.write("### Analysis Results DataFrame")
+    st.dataframe(result_df)
+    st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
-
