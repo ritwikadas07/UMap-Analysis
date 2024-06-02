@@ -153,12 +153,7 @@ if 'features' in locals() and 'labels' in locals():
         umap_3d_results = umap_3d.fit_transform(features)
 
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
-
-        # Deduplicate labels to show each label only once
-        unique_labels = labels.drop_duplicates().reset_index(drop=True)
-        result_df['Label'] = result_df['Label'].astype('category').cat.codes
-        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
+        result_df['Label'] = labels.astype(str)
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
@@ -172,12 +167,7 @@ if 'features' in locals() and 'labels' in locals():
         pca_3d_results = pca_3d.fit_transform(features)
 
         result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
-
-        # Deduplicate labels to show each label only once
-        unique_labels = labels.drop_duplicates().reset_index(drop=True)
-        result_df['Label'] = result_df['Label'].astype('category').cat.codes
-        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
+        result_df['Label'] = labels.astype(str)
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
@@ -208,11 +198,6 @@ if 'features' in locals() and 'labels' in locals():
         result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
         result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
         result_df['Component 3'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
-
-        # Deduplicate labels to show each label only once
-        unique_labels = labels.drop_duplicates().reset_index(drop=True)
-        result_df['Label'] = result_df['Label'].astype('category').cat.codes
-        result_df['Label'] = result_df['Label'].apply(lambda x: unique_labels[x])
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
