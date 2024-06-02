@@ -101,27 +101,6 @@ def analyze_and_plot(features, labels, analysis_type, title, colormap):
     
     return result_df
 
-# Function to reconstruct images from latent space and visualize them
-def reconstruct_and_visualize(latent_space, decoder, title):
-    reconstructed_images = decoder.predict(latent_space)
-    # Ensure the reshaping matches the correct dimensions
-    expected_shapes = [(784,), (28, 28)]
-    if reconstructed_images.shape[1] == 784:
-        reconstructed_images = reconstructed_images.reshape(-1, 28, 28)
-    elif reconstructed_images.shape[1] == 64:
-        reconstructed_images = reconstructed_images.reshape(-1, 8, 8)
-        st.write("The reconstructed images have a shape of 8x8, which might be incorrect.")
-    else:
-        st.write(f"Unexpected shape for reconstructed images: {reconstructed_images.shape}")
-        raise ValueError("Unexpected shape for reconstructed images")
-
-    fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-    for i in range(5):
-        axes[i].imshow(reconstructed_images[i], cmap='gray')
-        axes[i].axis('off')
-    plt.suptitle(title)
-    st.pyplot(fig)
-
 # Function to generate a lattice of points in the latent space and decode them
 def generate_lattice_and_decode(decoder, grid_size=20):
     # Create a grid of points in the latent space
@@ -211,7 +190,7 @@ if 'features' in locals() and 'labels' in locals():
     
     if analysis_type == "VAE" and dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
         vae_2d_results = vae_latent_space[:, :2]
-        vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
+                vae_2d_df = pd.DataFrame(vae_2d_results, columns=['Dim 1', 'Dim 2'])
         vae_2d_df['Label'] = labels
         fig2 = px.scatter(vae_2d_df, x='Dim 1', y='Dim 2', color='Label', hover_name='Label', color_continuous_scale=colormap)
         fig2.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
@@ -219,10 +198,6 @@ if 'features' in locals() and 'labels' in locals():
                            xaxis_title='Dim 1',
                            yaxis_title='Dim 2')
         st.plotly_chart(fig2)
-
-        # Reconstruct images from the VAE latent space
-        st.write("### Reconstructed Images from VAE Latent Space")
-        reconstruct_and_visualize(vae_latent_space[:5], vae_decoder, "Reconstructed Images from VAE Latent Space")
 
         # Generate and display lattice of decoded images
         st.write("### Lattice of Decoded Images from VAE Latent Space")
