@@ -46,6 +46,7 @@ def load_animal_descriptions():
 # Function to load the default NAICS codes dataset with random samples of text data
 def load_naics_codes():
     df = pd.read_csv('naics_codes_sampled.csv')
+    df = df.dropna(subset=['Description'])  # Drop rows with null descriptions
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
