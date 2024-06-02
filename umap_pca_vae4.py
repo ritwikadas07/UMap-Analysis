@@ -29,14 +29,14 @@ def load_digits_dataset():
 
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('data/fashion-mnist_train_reduced.csv')
+    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
     return fashion_mnist_df, images
 
 # Function to load the default Animal Descriptions dataset
 def load_animal_descriptions():
-    df = pd.read_csv('data/animal_descriptions.csv')
+    df = pd.read_csv('animal_descriptions.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
@@ -45,7 +45,7 @@ def load_animal_descriptions():
 
 # Function to load the default NAICS codes dataset with random samples of text data
 def load_naics_codes():
-    df = pd.read_csv('data/naics_codes_sampled.csv')
+    df = pd.read_csv('naics_codes_sampled.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -54,7 +54,7 @@ def load_naics_codes():
 
 # Function to load the default Financial Statements dataset with unique companies from the same time period
 def load_financial_statements():
-    df = pd.read_csv('data/financial_statements_filtered.csv')
+    df = pd.read_csv('financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
