@@ -10,14 +10,15 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
 
-# Function to load pre-trained VAE encoder and latent space
+# Function to load pre-trained VAE encoder and decoder
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
+    decoder = load_model('vae_decoder.keras')  # Ensure you have the decoder model
     latent_space = np.load('latent_space.npy')
-    return encoder, latent_space
+    return encoder, decoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -193,7 +194,7 @@ if 'features' in locals() and 'labels' in locals():
         scaler = StandardScaler()
         result_df[['Component 1', 'Component 2', 'Component 3']] = scaler.fit_transform(result_df[['Component 1', 'Component 2', 'Component 3']])
 
-        # Add jitter to spread out the data points
+                # Add jitter to spread out the data points
         jitter_strength = 0.01
         result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
         result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
@@ -220,18 +221,8 @@ if 'features' in locals() and 'labels' in locals():
             for i, yi in enumerate(grid_y):
                 for j, xi in enumerate(grid_x):
                     z_sample = np.array([[xi, yi]])
-                    x_decoded = vae_encoder.predict(z_sample)
                     if dataset_choice == "Default Digits":
-                        digit = x_decoded[0].reshape(8, 8)
-                        axes[i, j].imshow(digit, cmap="gray")
+                        z_sample = np.array([[xi, yi, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
                     else:
-                        fashion = x_decoded[0].reshape(28, 28)
-                        axes[i, j].imshow(fashion, cmap="gray")
-                    axes[i, j].axis('off')
-
-            plt.subplots_adjust(wspace=0.05, hspace=0.05)
-            st.pyplot(fig)
-
-else:
-    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
+                        z_sample = np.array([[xi, yi, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
