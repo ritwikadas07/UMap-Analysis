@@ -29,14 +29,14 @@ def load_digits_dataset():
 
 # Function to load the Fashion MNIST dataset from CSV
 def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('/mnt/data/fashion-mnist_train_reduced.csv')
+    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
     images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
     fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
     return fashion_mnist_df, images
 
 # Function to load the default Animal Descriptions dataset
 def load_animal_descriptions():
-    df = pd.read_csv('/mnt/data/animal_descriptions.csv')
+    df = pd.read_csv('animal_descriptions.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
@@ -45,7 +45,7 @@ def load_animal_descriptions():
 
 # Function to load the default NAICS codes dataset with random samples of text data
 def load_naics_codes():
-    df = pd.read_csv('/mnt/data/naics_codes_sampled.csv')
+    df = pd.read_csv('naics_codes_sampled.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -54,7 +54,7 @@ def load_naics_codes():
 
 # Function to load the default Financial Statements dataset with unique companies from the same time period
 def load_financial_statements():
-    df = pd.read_csv('/mnt/data/financial_statements_filtered.csv')
+    df = pd.read_csv('financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
@@ -102,12 +102,14 @@ def analyze_and_plot(features, labels, analysis_type, title, colormap):
     return result_df
 
 # Function to reconstruct images from latent space and visualize them
+# Function to reconstruct images from latent space and visualize them
 def reconstruct_and_visualize(latent_space, decoder, title):
     reconstructed_images = decoder.predict(latent_space)
     # Ensure the reshaping matches the correct dimensions
     if reconstructed_images.shape[-1] == 784:  # For Digits and Fashion MNIST datasets (28x28)
         reconstructed_images = reconstructed_images.reshape(-1, 28, 28)
     else:
+        st.write(f"Unexpected shape for reconstructed images: {reconstructed_images.shape}")
         raise ValueError("Unexpected shape for reconstructed images")
 
     fig, axes = plt.subplots(1, 5, figsize=(10, 3))
@@ -116,6 +118,7 @@ def reconstruct_and_visualize(latent_space, decoder, title):
         axes[i].axis('off')
     plt.suptitle(title)
     st.pyplot(fig)
+
 
 # Function to generate a lattice of points in the latent space and decode them
 def generate_lattice_and_decode(decoder, grid_size=20):
