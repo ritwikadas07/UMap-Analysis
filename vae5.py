@@ -59,6 +59,7 @@ def load_financial_statements():
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
     labels = df["Company"]
     return tfidf_df, labels, df
+    
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -202,20 +203,29 @@ if 'features' in locals() and 'labels' in locals():
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        # Plotting the 2D latent space for digits
         if dataset_choice == "Default Digits":
-            def plot_label_clusters(encoder, data, labels):
-                z_mean = encoder.predict(data, verbose=0)
-                plt.figure(figsize=(12, 10))
-                plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap='viridis')
-                plt.colorbar()
-                plt.xlabel("z[0]")
-                plt.ylabel("z[1]")
-                plt.title("2D Latent Space of Digits")
-                st.pyplot(plt)
+            st.write("### 2D Latent Space Sampled as a Lattice")
+            n = 15  # Number of points per axis
+            digit_size = 8  # Size of each digit
+            figure = np.zeros((digit_size * n, digit_size * n))
 
-            digits_data = load_digits().data / 16.0
-            plot_label_clusters(vae_encoder, digits_data, load_digits().target)
+            # Linearly spaced coordinates corresponding to the 2D latent space
+            grid_x = np.linspace(-2, 2, n)
+            grid_y = np.linspace(-2, 2, n)
+
+            for i, yi in enumerate(grid_y):
+                for j, xi in enumerate(grid_x):
+                    z_sample = np.array([[xi, yi]])
+                    x_decoded = vae_encoder.predict(z_sample)
+                    digit = x_decoded[0].reshape(digit_size, digit_size)
+                    figure[i * digit_size: (i + 1) * digit_size,
+                           j * digit_size: (j + 1) * digit_size] = digit
+
+            plt.figure(figsize=(10, 10))
+            plt.imshow(figure, cmap='gray')
+            plt.title('2D Latent Space Sampled as a Lattice')
+            plt.axis('off')
+            st.pyplot(plt)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
