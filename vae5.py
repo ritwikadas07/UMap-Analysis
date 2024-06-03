@@ -13,11 +13,12 @@ import umap.umap_ as umap
 # Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
+    decoder = load_model('vae_decoder.keras')
     latent_space = np.load('latent_space.npy')
-    return encoder, latent_space
+    return encoder, decoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -26,40 +27,46 @@ def load_digits_dataset():
     digits_df['label'] = digits.target
     return digits_df, digits.images
 
-# Function to load the Fashion MNIST dataset from CSV
-def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
-    images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
-    fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
-    return fashion_mnist_df, images
+# Function to plot the latent space as a grid of sampled digits
+def plot_latent_space(decoder, n=30, figsize=15):
+    digit_size = 8
+    scale = 1.0
+    figure = np.zeros((digit_size * n, digit_size * n))
+    grid_x = np.linspace(-scale, scale, n)
+    grid_y = np.linspace(-scale, scale, n)[::-1]
 
-# Function to load the default Animal Descriptions dataset
-def load_animal_descriptions():
-    df = pd.read_csv('animal_descriptions.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
-    labels = df["Animal"]
-    return tfidf_df, labels, df
+    for i, yi in enumerate(grid_y):
+        for j, xi in enumerate(grid_x):
+            z_sample = np.array([[xi, yi]])
+            x_decoded = decoder.predict(z_sample, verbose=0)
+            digit = x_decoded[0].reshape(digit_size, digit_size)
+            figure[
+                i * digit_size : (i + 1) * digit_size,
+                j * digit_size : (j + 1) * digit_size,
+            ] = digit
 
-# Function to load the sampled NAICS codes dataset
-def load_naics_codes():
-    df = pd.read_csv('naics_codes_sampled.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
-    labels = df["NAICS Code"]
-    return tfidf_df, labels, df
+    plt.figure(figsize=(figsize, figsize))
+    start_range = digit_size // 2
+    end_range = n * digit_size + start_range
+    pixel_range = np.arange(start_range, end_range, digit_size)
+    sample_range_x = np.round(grid_x, 1)
+    sample_range_y = np.round(grid_y, 1)
+    plt.xticks(pixel_range, sample_range_x)
+    plt.yticks(pixel_range, sample_range_y)
+    plt.xlabel("z[0]")
+    plt.ylabel("z[1]")
+    plt.imshow(figure, cmap="Greys_r")
+    st.pyplot(plt)
 
-# Function to load the financial statements dataset
-def load_financial_statements():
-    df = pd.read_csv('financial_statements_filtered.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-    labels = df["Company"]
-    return tfidf_df, labels, df
-    
+# Function to plot the latent space clusters
+def plot_label_clusters(encoder, data, labels):
+    z_mean, _, _ = encoder.predict(data, verbose=0)
+    plt.figure(figsize=(12, 10))
+    plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap='viridis')
+    plt.colorbar()
+    plt.xlabel("z[0]")
+    plt.ylabel("z[1]")
+    st.pyplot(plt)
 
 # Streamlit App
 st.title("3D Projection of Vectors")
@@ -174,58 +181,98 @@ if 'features' in locals() and 'labels' in locals():
                                      zaxis_title='Component 3'))
 
     elif analysis_type == "VAE":
-        vae_3d_results = vae_latent_space[:, :3]
+        # Plot the latent space as a grid of sampled digits
+        st.write("### Latent Space Grid of Sampled Digits")
+        plot_latent_space(vae_decoder, n=30, figsize=15)
 
-        # Ensure labels are correctly aligned
-        labels = labels.reset_index(drop=True)
+        # Plot the latent space clusters for different digit classes
+        st.write("### Latent Space Clusters")
+        (x_train, y_train), _ = keras.datasets.mnist.load_data()
+        x_train = np.expand_dims(x_train, -1).astype("float32") / 255
+        plot_label_clusters(vae_encoder, x_train, y_train)
 
-        result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels
+    st.write("### Analysis Results DataFrame")
+    st.dataframe(result_df)
+    st.plotly_chart(fig)
+else
+    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
 
-        # Filter out rows with NaN labels
-        result_df = result_df.dropna(subset=['Label'])
-        result_df['Label'] = result_df['Label'].astype(str)
+# Function to load the Fashion MNIST dataset from CSV
+def load_fashion_mnist_dataset():
+    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
+    images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
+    fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
+    return fashion_mnist_df, images
 
-        # Normalize the data to spread out the points
-        scaler = StandardScaler()
-        result_df[['Component 1', 'Component 2', 'Component 3']] = scaler.fit_transform(result_df[['Component 1', 'Component 2', 'Component 3']])
+# Function to load the default Animal Descriptions dataset
+def load_animal_descriptions():
+    df = pd.read_csv('animal_descriptions.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
+    labels = df["Animal"]
+    return tfidf_df, labels, df
 
-        # Add jitter to spread out the data points
-        jitter_strength = 0.01
-        result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
-        result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
-        result_df['Component 3'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+# Function to load the sampled NAICS codes dataset
+def load_naics_codes():
+    df = pd.read_csv('naics_codes_sampled.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
+    labels = df["NAICS Code"]
+    return tfidf_df, labels, df
+
+# Function to load the financial statements dataset
+def load_financial_statements():
+    df = pd.read_csv('financial_statements_filtered.csv')
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df["Description"])
+    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
+    labels = df["Company"]
+    return tfidf_df, labels, df
+
+# Update the Streamlit app to handle the new functions
+if 'features' in locals() and 'labels' in locals():
+    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
+
+    if analysis_type == "UMAP":
+        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+        umap_3d_results = umap_3d.fit_transform(features)
+
+        result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels.astype(str)
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-        fig.update_layout(title='3D VAE Projection of Vectors',
+        fig.update_layout(title='3D UMAP Projection of Vectors',
                           scene=dict(xaxis_title='Component 1',
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        if dataset_choice == "Default Digits":
-            st.write("### 2D Latent Space Sampled as a Lattice")
-            n = 15  # Number of points per axis
-            digit_size = 8  # Size of each digit
-            figure = np.zeros((digit_size * n, digit_size * n))
+    elif analysis_type == "PCA":
+        pca_3d = PCA(n_components=3)
+        pca_3d_results = pca_3d.fit_transform(features)
 
-            # Linearly spaced coordinates corresponding to the 2D latent space
-            grid_x = np.linspace(-2, 2, n)
-            grid_y = np.linspace(-2, 2, n)
+        result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+        result_df['Label'] = labels.astype(str)
 
-            for i, yi in enumerate(grid_y):
-                for j, xi in enumerate(grid_x):
-                    z_sample = np.array([[xi, yi]])
-                    x_decoded = vae_encoder.predict(z_sample)
-                    digit = x_decoded[0].reshape(digit_size, digit_size)
-                    figure[i * digit_size: (i + 1) * digit_size,
-                           j * digit_size: (j + 1) * digit_size] = digit
+        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+        fig.update_layout(title='3D PCA Projection of Vectors',
+                          scene=dict(xaxis_title='Component 1',
+                                     yaxis_title='Component 2',
+                                     zaxis_title='Component 3'))
 
-            plt.figure(figsize=(10, 10))
-            plt.imshow(figure, cmap='gray')
-            plt.title('2D Latent Space Sampled as a Lattice')
-            plt.axis('off')
-            st.pyplot(plt)
+    elif analysis_type == "VAE":
+        # Plot the latent space as a grid of sampled digits
+        st.write("### Latent Space Grid of Sampled Digits")
+        plot_latent_space(vae_decoder, n=30, figsize=15)
+
+        # Plot the latent space clusters for different digit classes
+        st.write("### Latent Space Clusters")
+        (x_train, y_train), _ = keras.datasets.mnist.load_data()
+        x_train = np.expand_dims(x_train, -1).astype("float32") / 255
+        plot_label_clusters(vae_encoder, x_train, y_train)
 
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
