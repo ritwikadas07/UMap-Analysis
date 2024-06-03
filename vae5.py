@@ -10,15 +10,14 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
 
-# Function to load pre-trained VAE encoder and decoder
+# Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
     encoder = load_model('vae_encoder.keras')
-    decoder = load_model('vae_decoder.keras')  # Ensure you have the decoder model
     latent_space = np.load('latent_space.npy')
-    return encoder, decoder, latent_space
+    return encoder, latent_space
 
 # Load VAE model and latent space
-vae_encoder, vae_decoder, vae_latent_space = load_vae_model()
+vae_encoder, vae_latent_space = load_vae_model()
 
 # Function to load the default Digits dataset
 def load_digits_dataset():
@@ -203,33 +202,23 @@ if 'features' in locals() and 'labels' in locals():
                                      yaxis_title='Component 2',
                                      zaxis_title='Component 3'))
 
-        st.write("### Analysis Results DataFrame")
-        st.dataframe(result_df)
-        st.plotly_chart(fig)
+        # Plotting the 2D latent space for digits
+        if dataset_choice == "Default Digits":
+            def plot_label_clusters(encoder, data, labels):
+                z_mean, _, _ = encoder.predict(data, verbose=0)
+                plt.figure(figsize=(12, 10))
+                plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap='viridis')
+                plt.colorbar()
+                plt.xlabel("z[0]")
+                plt.ylabel("z[1]")
+                plt.title("2D Latent Space of Digits")
+                st.pyplot(plt)
 
-        if dataset_choice in ["Default Digits", "Default Fashion MNIST"]:
-            # Create 2D lattice plot of the latent space
-            n = 15  # Number of points along each dimension
-            grid_x = np.linspace(-3, 3, n)
-            grid_y = np.linspace(-3, 3, n)
+            digits_data = load_digits().data / 16.0
+            plot_label_clusters(vae_encoder, digits_data, load_digits().target)
 
-            fig, axes = plt.subplots(n, n, figsize=(10, 10), sharex=True, sharey=True)
-            for i, yi in enumerate(grid_y):
-                for j, xi in enumerate(grid_x):
-                    z_sample = np.array([[xi, yi]])
-                    z_sample = np.concatenate([z_sample, np.zeros((1, vae_latent_space.shape[1] - 2))], axis=1)
-                    z_decoded = vae_decoder.predict(z_sample)
-                    if dataset_choice == "Default Digits":
-                        digit = z_decoded[0].reshape(8, 8)
-                        axes[i, j].imshow(digit, cmap="gray")
-                    else:
-                        fashion = z_decoded[0].reshape(28, 28)
-                        axes[i, j].imshow(fashion, cmap="gray")
-                    axes[i, j].axis('off')
-
-            plt.subplots_adjust(wspace=0.05, hspace=0.05)
-            st.pyplot(fig)
-
+    st.write("### Analysis Results DataFrame")
+    st.dataframe(result_df)
+    st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
-
