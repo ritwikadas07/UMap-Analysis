@@ -194,7 +194,7 @@ if 'features' in locals() and 'labels' in locals():
     st.write("### Analysis Results DataFrame")
     st.dataframe(result_df)
     st.plotly_chart(fig)
-else
+else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
 
 # Function to load the Fashion MNIST dataset from CSV
@@ -279,3 +279,4 @@ if 'features' in locals() and 'labels' in locals():
     st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
+
