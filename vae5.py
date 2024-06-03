@@ -9,6 +9,7 @@ from sklearn.datasets import load_digits
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import umap.umap_ as umap
+from tensorflow import keras
 
 # Function to load pre-trained VAE encoder and latent space
 def load_vae_model():
@@ -71,9 +72,9 @@ def plot_label_clusters(encoder, data, labels):
 # Streamlit App
 st.title("3D Projection of Vectors")
 
-dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements", "Upload your own TSV file"])
+dataset_choice = st.selectbox("Choose a dataset", ["Default Digits", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements", "Upload your own TSV file"], key='dataset_choice')
 
-color_map = st.selectbox("Choose a color map", ["Viridis", "Cividis", "Plasma", "Inferno"])
+color_map = st.selectbox("Choose a color map", ["Viridis", "Cividis", "Plasma", "Inferno"], key='color_map')
 
 if dataset_choice == "Default Digits":
     st.write("Using the default Digits dataset.")
@@ -131,7 +132,7 @@ elif dataset_choice == "Default Financial Statements":
         st.write(df.head(20))
 
 else:
-    uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
+    uploaded_file = st.file_uploader("Upload the TSV file", type="tsv", key='file_uploader')
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file, sep='\t')
         st.write("### First 10 Lines of the Uploaded Data")
@@ -150,7 +151,7 @@ else:
             features = numeric_df
 
 if 'features' in locals() and 'labels' in locals():
-    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
+    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"], key='analysis_type')
 
     if analysis_type == "UMAP":
         umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
@@ -196,87 +197,3 @@ if 'features' in locals() and 'labels' in locals():
     st.plotly_chart(fig)
 else:
     st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
-
-# Function to load the Fashion MNIST dataset from CSV
-def load_fashion_mnist_dataset():
-    fashion_mnist_df = pd.read_csv('fashion-mnist_train_reduced.csv')
-    images = fashion_mnist_df.iloc[:, 1:].values.reshape(-1, 28, 28)
-    fashion_mnist_df['label'] = fashion_mnist_df.iloc[:, 0]
-    return fashion_mnist_df, images
-
-# Function to load the default Animal Descriptions dataset
-def load_animal_descriptions():
-    df = pd.read_csv('animal_descriptions.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Animal"], columns=vectorizer.get_feature_names_out())
-    labels = df["Animal"]
-    return tfidf_df, labels, df
-
-# Function to load the sampled NAICS codes dataset
-def load_naics_codes():
-    df = pd.read_csv('naics_codes_sampled.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
-    labels = df["NAICS Code"]
-    return tfidf_df, labels, df
-
-# Function to load the financial statements dataset
-def load_financial_statements():
-    df = pd.read_csv('financial_statements_filtered.csv')
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(df["Description"])
-    tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
-    labels = df["Company"]
-    return tfidf_df, labels, df
-
-# Update the Streamlit app to handle the new functions
-if 'features' in locals() and 'labels' in locals():
-    analysis_type = st.selectbox("Select analysis type", ["UMAP", "PCA", "VAE"])
-
-    if analysis_type == "UMAP":
-        umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-        umap_3d_results = umap_3d.fit_transform(features)
-
-        result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels.astype(str)
-
-        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-        fig.update_layout(title='3D UMAP Projection of Vectors',
-                          scene=dict(xaxis_title='Component 1',
-                                     yaxis_title='Component 2',
-                                     zaxis_title='Component 3'))
-
-    elif analysis_type == "PCA":
-        pca_3d = PCA(n_components=3)
-        pca_3d_results = pca_3d.fit_transform(features)
-
-        result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-        result_df['Label'] = labels.astype(str)
-
-        fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-        fig.update_layout(title='3D PCA Projection of Vectors',
-                          scene=dict(xaxis_title='Component 1',
-                                     yaxis_title='Component 2',
-                                     zaxis_title='Component 3'))
-
-    elif analysis_type == "VAE":
-        # Plot the latent space as a grid of sampled digits
-        st.write("### Latent Space Grid of Sampled Digits")
-        plot_latent_space(vae_decoder, n=30, figsize=15)
-
-        # Plot the latent space clusters for different digit classes
-        st.write("### Latent Space Clusters")
-        (x_train, y_train), _ = keras.datasets.mnist.load_data()
-        x_train = np.expand_dims(x_train, -1).astype("float32") / 255
-        plot_label_clusters(vae_encoder, x_train, y_train)
-
-    st.write("### Analysis Results DataFrame")
-    st.dataframe(result_df)
-    st.plotly_chart(fig)
-else:
-    st.write("Please upload a TSV file to visualize the UMAP, PCA, or VAE projection, or select a default dataset.")
-
