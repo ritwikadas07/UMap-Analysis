@@ -242,7 +242,7 @@ if 'features' in locals() and 'labels' in locals():
             fig, axes = plt.subplots(n, n, figsize=(10, 10), subplot_kw={'xticks':[], 'yticks':[]}, gridspec_kw=dict(hspace=0.1, wspace=0.1))
             for i, digit in enumerate(decoded_images):
                 ax = axes[i // n, i % n]
-                ax.imshow(digit.reshape(28, 28), cmap='gray')
+                ax.imshow(digit.reshape(8, 8), cmap='gray')  # Update the reshape to 8x8 for digits dataset
                 ax.set_xlabel(f'{grid_x[i % n]:.2f}')
                 ax.set_ylabel(f'{grid_y[i // n]:.2f}')
                 ax.axis('on')
