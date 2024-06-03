@@ -205,7 +205,7 @@ if 'features' in locals() and 'labels' in locals():
         # Plotting the 2D latent space for digits
         if dataset_choice == "Default Digits":
             def plot_label_clusters(encoder, data, labels):
-                z_mean, _, _ = encoder.predict(data, verbose=0)
+                z_mean = encoder.predict(data, verbose=0)
                 plt.figure(figsize=(12, 10))
                 plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap='viridis')
                 plt.colorbar()
