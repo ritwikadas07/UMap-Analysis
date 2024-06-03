@@ -237,6 +237,11 @@ def main():
                 grid_y = np.linspace(-1, 1, n)
                 grid_latent = np.array(np.meshgrid(grid_x, grid_y)).T.reshape(-1, 2)
 
+                # Ensure the grid_latent shape matches the expected shape for the decoder
+                expected_shape = vae_decoder.input_shape[1]
+                if grid_latent.shape[1] != expected_shape:
+                    grid_latent = np.pad(grid_latent, ((0, 0), (0, expected_shape - grid_latent.shape[1])), 'constant')
+
                 decoded_images = vae_decoder.predict(grid_latent)
 
                 fig, axes = plt.subplots(n, n, figsize=(10, 10), subplot_kw={'xticks':[], 'yticks':[]}, gridspec_kw=dict(hspace=0.1, wspace=0.1))
