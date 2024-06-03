@@ -196,7 +196,7 @@ if 'features' in locals() and 'labels' in locals():
         jitter_strength = 0.01
         result_df['Component 1'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
         result_df['Component 2'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
-        result_df['Component 3'] += np.random.normal(0, jitter_strength, size=result_df.shape[0])
+        result_df['Component 3'] += np.random.normal(0, jitter_strength, size[result_df.shape[0]])
 
         fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
         fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
