@@ -67,6 +67,7 @@ def load_financial_statements():
     return tfidf_df, labels, df
 
 def plot_latent_space(vae_decoder, n=30, figsize=15):
+    st.write("### Display a grid of sampled digits")
     digit_size = 28
     scale = 1.0
     figure = np.zeros((digit_size * n, digit_size * n))
@@ -96,10 +97,11 @@ def plot_latent_space(vae_decoder, n=30, figsize=15):
     plt.imshow(figure, cmap="Greys_r")
     st.pyplot(plt)
 
-def plot_label_clusters(vae_encoder, data, labels):
+def plot_label_clusters(vae_encoder, data, labels, color_map):
+    st.write("### 2D Latent Space")
     z_mean, _, _ = vae_encoder.predict(data, verbose=0)
     plt.figure(figsize=(12, 10))
-    plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap='viridis')
+    plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap=color_map)
     plt.colorbar()
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
@@ -246,7 +248,9 @@ def main():
                 st.plotly_chart(fig)
 
                 plot_latent_space(vae_decoder)
-                plot_label_clusters(vae_encoder, mnist_digits, labels)
+                plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
+            else:
+                st.write("VAE analysis is only available for the Default Digits MNIST dataset.")
 
 if __name__ == "__main__":
     main()
