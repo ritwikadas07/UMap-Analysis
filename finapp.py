@@ -67,7 +67,7 @@ def load_financial_statements():
     return tfidf_df, labels, df
 
 def plot_latent_space(vae_decoder, n=30, figsize=15):
-    st.write("### Display a grid of sampled digits")
+    st.write("### Displaying grid of sampled digits")
     digit_size = 28
     scale = 1.0
     figure = np.zeros((digit_size * n, digit_size * n))
@@ -98,7 +98,7 @@ def plot_latent_space(vae_decoder, n=30, figsize=15):
     st.pyplot(plt)
 
 def plot_label_clusters(vae_encoder, data, labels, color_map):
-    st.write("### 2D Latent Space")
+    st.write("### Displaying 2D Latent Space")
     z_mean, _, _ = vae_encoder.predict(data, verbose=0)
     plt.figure(figsize=(12, 10))
     plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap=color_map)
@@ -179,11 +179,11 @@ def main():
             st.write("### First 10 Lines of the Uploaded Data")
             st.write(df.head(10))
 
-            numeric_df = df.select_dtypes(include=[np.number])
+            numeric_df = df.select_dtypes(include([np.number]))
 
             if 'label' in df.columns:
                 labels = df['label']
-                features = numeric_df.drop(columns=['label'])
+                features = numeric_df.drop(columns(['label']))
             elif 'Animal' in df.columns:
                 labels = df['Animal']
                 features = numeric_df
@@ -214,7 +214,7 @@ def main():
             pca_3d = PCA(n_components=3)
             pca_3d_results = pca_3d.fit_transform(features)
 
-            result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+            result_df = pd.DataFrame(pca_3d_results, columns(['Component 1', 'Component 2', 'Component 3']))
             result_df['Label'] = labels.astype(str)
 
             fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
@@ -226,31 +226,29 @@ def main():
             st.plotly_chart(fig)
 
         elif analysis_choice == "VAE":
+            vae_latent_space = vae_latent
+
+            if vae_latent_space.shape[1] == 3:
+                vae_3d_results = vae_latent_space[:, :3]
+                result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+            else:
+                vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
+
+            result_df['Label'] = labels.astype(str)
+
+            fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+            fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+            fig.update_layout(title='3D VAE Projection of Vectors',
+                              scene=dict(xaxis_title='Component 1',
+                                         yaxis_title='Component 2',
+                                         zaxis_title='Component 3'))
+            st.plotly_chart(fig)
+
             if dataset_choice == "Default Digits MNIST":
-                vae_latent_space = vae_latent
-
-                if vae_latent_space.shape[1] == 3:
-                    vae_3d_results = vae_latent_space[:, :3]
-                    result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-                else:
-                    vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                    vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                    result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
-
-                result_df['Label'] = labels.astype(str)
-
-                fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                fig.update_layout(title='3D VAE Projection of Vectors',
-                                  scene=dict(xaxis_title='Component 1',
-                                             yaxis_title='Component 2',
-                                             zaxis_title='Component 3'))
-                st.plotly_chart(fig)
-
                 plot_latent_space(vae_decoder)
                 plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
-            else:
-                st.write("VAE analysis is only available for the Default Digits MNIST dataset.")
 
 if __name__ == "__main__":
     main()
