@@ -117,7 +117,7 @@ def main():
         
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
         mnist_digits = np.concatenate([x_train, x_test], axis=0)
-        mnist_digits = mnist_digits[:len(mnist_digits)//2]  # Sample half of the dataset
+        mnist_digits = mnist_digits[:len(mnist_digits)//4]  # Sample one-fourth of the dataset
         mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
         labels = np.concatenate([y_train, y_test])[:len(mnist_digits)]  # Sample corresponding labels
 
