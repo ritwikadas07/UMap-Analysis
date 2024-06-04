@@ -112,7 +112,7 @@ def main():
 
     datasets = ["Default Digits MNIST", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements", "Upload your own TSV file"]
     dataset_choice = st.selectbox("Choose a dataset", datasets)
-    color_map = st.selectbox("Choose a color map", ["Viridis", "Cividis", "Plasma", "Inferno"], index=0)
+    color_map = st.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
 
     if dataset_choice == "Default Digits MNIST":
         st.write("Using the Default Digits MNIST dataset.")
@@ -149,9 +149,9 @@ def main():
             axes[i].axis('off')
         st.pyplot(fig)
 
-        numeric_df = df.select_dtypes(include=[np.number])
+        numeric_df = df.select_dtypes(include([np.number]))
         labels = df['label']
-        features = numeric_df.drop(columns=['label'])
+        features = numeric_df.drop(columns(['label']))
 
     elif dataset_choice == "Default Animal Descriptions":
         st.write("Using the default Animal Descriptions dataset.")
@@ -214,7 +214,7 @@ def main():
             pca_3d = PCA(n_components=3)
             pca_3d_results = pca_3d.fit_transform(features)
 
-            result_df = pd.DataFrame(pca_3d_results, columns(['Component 1', 'Component 2', 'Component 3']))
+            result_df = pd.DataFrame(pca_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
             result_df['Label'] = labels.astype(str)
 
             fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
