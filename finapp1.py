@@ -1,15 +1,14 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.express as px
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 import umap.umap_ as umap
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import custom_object_scope
 from tensorflow.keras import layers
 import tensorflow as tf
+import plotly.express as px
 
 # Define the custom Sampling layer
 class Sampling(layers.Layer):
@@ -50,7 +49,7 @@ def load_animal_descriptions():
     return tfidf_df, labels, df
 
 def load_naics_codes():
-    df = pd.read_csv('naics_codes_sampled.csv')
+    df = pd.read_csv('naics_codes.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -58,7 +57,7 @@ def load_naics_codes():
     return tfidf_df, labels, df
 
 def load_financial_statements():
-    df = pd.read_csv('financial_statements_50_companies_1Q2024.csv')
+    df = pd.read_csv('financial_statements_50_companies.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
@@ -66,7 +65,7 @@ def load_financial_statements():
     return tfidf_df, labels, df
 
 def plot_latent_space(vae_decoder, n=30, figsize=15):
-    print("### Displaying grid of sampled digits")
+    print("Displaying grid of sampled digits")
     digit_size = 28
     scale = 1.0
     figure = np.zeros((digit_size * n, digit_size * n))
@@ -97,23 +96,22 @@ def plot_latent_space(vae_decoder, n=30, figsize=15):
     plt.show()
 
 def plot_label_clusters(vae_encoder, data, labels, color_map):
-    print("### Displaying 2D Latent Space")
+    print("Displaying 2D Latent Space")
     z_mean, _, _ = vae_encoder.predict(data, verbose=0)
     plt.figure(figsize=(12, 10))
     scatter = plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap=color_map)
     plt.colorbar(scatter)
     plt.xlabel("z[0]")
     plt.ylabel("z[1]")
+    plt.xlim(-4, 3.5)  # Adjust x-axis limits to match the provided image
     plt.show()
 
 def main():
     datasets = ["Default Digits MNIST", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements"]
     dataset_choice = int(input("Choose a dataset (0: Default Digits MNIST, 1: Default Fashion MNIST, 2: Default Animal Descriptions, 3: Sampled NAICS Codes, 4: Default Financial Statements): "))
-    color_map_choice = int(input("Choose a color map (0: viridis, 1: cividis, 2: plasma, 3: inferno): "))
-    color_maps = ["viridis", "cividis", "plasma", "inferno"]
-    color_map = color_maps[color_map_choice]
+    color_map = input("Choose a color map (viridis, cividis, plasma, inferno): ")
 
-    if datasets[dataset_choice] == "Default Digits MNIST":
+    if dataset_choice == 0:  # Default Digits MNIST
         print("Using the Default Digits MNIST dataset.")
         
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -122,7 +120,7 @@ def main():
         mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
         labels = np.concatenate([y_train, y_test])[:len(mnist_digits)]  # Sample corresponding labels
 
-        print("### Sample Images from the MNIST Dataset")
+        print("Sample Images from the MNIST Dataset")
         fig, axes = plt.subplots(1, 5, figsize=(10, 3))
         for i in range(5):
             axes[i].imshow(mnist_digits[i].reshape(28, 28), cmap='gray')
@@ -134,13 +132,13 @@ def main():
         features = numeric_df
         labels = pd.Series(labels)
 
-    elif datasets[dataset_choice] == "Default Fashion MNIST":
+    elif dataset_choice == 1:  # Default Fashion MNIST
         print("Using the default Fashion MNIST dataset.")
         df, images = load_fashion_mnist_dataset()
-        print("### Contents of the Fashion MNIST Dataset")
+        print("Contents of the Fashion MNIST Dataset")
         print(df.head(20))
 
-        print("### Sample Images from the Fashion MNIST Dataset")
+        print("Sample Images from the Fashion MNIST Dataset")
         fig, axes = plt.subplots(1, 5, figsize=(10, 3))
         for i in range(5):
             axes[i].imshow(images[i], cmap='gray')
@@ -152,33 +150,30 @@ def main():
         labels = df['label']
         features = numeric_df.drop(columns(['label']))
 
-    elif datasets[dataset_choice] == "Default Animal Descriptions":
+    elif dataset_choice == 2:  # Default Animal Descriptions
         print("Using the default Animal Descriptions dataset.")
         features, labels, df = load_animal_descriptions()
-        print("### Animal Descriptions Dataset")
+        print("Animal Descriptions Dataset")
         print(df)
 
-    elif datasets[dataset_choice] == "Sampled NAICS Codes":
+    elif dataset_choice == 3:  # Sampled NAICS Codes
         print("Using the sampled NAICS Codes dataset.")
         features, labels, df = load_naics_codes()
-        print("### NAICS Codes Dataset")
+        print("NAICS Codes Dataset")
         print(df.head(20))
 
-    elif datasets[dataset_choice] == "Default Financial Statements":
+    elif dataset_choice == 4:  # Default Financial Statements
         print("Using the default Financial Statements dataset.")
         features, labels, df = load_financial_statements()
         if features is not None and labels is not None:
-            print("### Financial Statements Dataset")
+            print("Financial Statements Dataset")
             print(df.head(20))
 
     analysis_types = ["UMAP", "PCA", "VAE"]
     analysis_choice = int(input("Select analysis type (0: UMAP, 1: PCA, 2: VAE): "))
 
-    if analysis_types[analysis_choice] == "UMAP":
+    if analysis_choice == 0:  # UMAP
         umap_3d = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-        umap_3d_results = umap_3d.fit_transform(features)
-
-        result_df = pd.DataFrame(umap_3d
         umap_3d_results = umap_3d.fit_transform(features)
 
         result_df = pd.DataFrame(umap_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
@@ -192,7 +187,7 @@ def main():
                                      zaxis_title='Component 3'))
         fig.show()
 
-    elif analysis_types[analysis_choice] == "PCA":
+    elif analysis_choice == 1:  # PCA
         pca_3d = PCA(n_components=3)
         pca_3d_results = pca_3d.fit_transform(features)
 
@@ -207,7 +202,7 @@ def main():
                                      zaxis_title='Component 3'))
         fig.show()
 
-    elif analysis_types[analysis_choice] == "VAE":
+    elif analysis_choice == 2:  # VAE
         vae_latent_space = vae_latent
 
         if vae_latent_space.shape[1] == 3:
@@ -228,9 +223,10 @@ def main():
                                      zaxis_title='Component 3'))
         fig.show()
 
-        if datasets[dataset_choice] == "Default Digits MNIST":
+        if dataset_choice == 0:  # Default Digits MNIST
             plot_latent_space(vae_decoder)
             plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
 
 if __name__ == "__main__":
     main()
+
