@@ -107,14 +107,18 @@ def plot_label_clusters(vae_encoder, data, labels, color_map):
     st.pyplot(plt)
 
 def main():
-    st.title("3D Projection of Vectors")
+    st.title("Projection of Vectors")
 
     datasets = ["Default Digits MNIST", "Default Fashion MNIST", "Default Animal Descriptions", "Sampled NAICS Codes", "Default Financial Statements"]
     dataset_choice = st.selectbox("Choose a dataset", datasets)
     color_map = st.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
-    dimensionality = st.selectbox("Choose dimensionality", ["2D", "3D"], index=0)
+    analysis_types = ["UMAP", "PCA", "VAE"]
+    analysis_choice = st.selectbox("Select analysis type", analysis_types)
+    dimensionality = st.selectbox("Select dimensionality", ["2D", "3D"])
+
+    submit = st.button("Submit")
     
-    if st.button("Submit"):
+    if submit:
         if dataset_choice == "Default Digits MNIST":
             st.write("Using the Default Digits MNIST dataset.")
             
@@ -173,17 +177,12 @@ def main():
                 st.write("### Financial Statements Dataset")
                 st.write(df.head(20))
 
-        analysis_types = ["UMAP", "PCA", "VAE"]
-        analysis_choice = st.selectbox("Select analysis type", analysis_types)
-
         if analysis_choice == "UMAP":
+            umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+            umap_results = umap_model.fit_transform(features)
             if dimensionality == "3D":
-                umap_model = umap.UMAP(n_components=3, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                umap_results = umap_model.fit_transform(features)
-
                 result_df = pd.DataFrame(umap_results, columns=['Component 1', 'Component 2', 'Component 3'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='3D UMAP Projection of Vectors',
@@ -192,12 +191,8 @@ def main():
                                              zaxis_title='Component 3'))
                 st.plotly_chart(fig)
             else:
-                umap_model = umap.UMAP(n_components=2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                umap_results = umap_model.fit_transform(features)
-
                 result_df = pd.DataFrame(umap_results, columns=['Component 1', 'Component 2'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter(result_df, x='Component 1', y='Component 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='2D UMAP Projection of Vectors',
@@ -206,13 +201,11 @@ def main():
                 st.plotly_chart(fig)
 
         elif analysis_choice == "PCA":
+            pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+            pca_results = pca_model.fit_transform(features)
             if dimensionality == "3D":
-                pca_model = PCA(n_components=3)
-                pca_results = pca_model.fit_transform(features)
-
                 result_df = pd.DataFrame(pca_results, columns=['Component 1', 'Component 2', 'Component 3'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='3D PCA Projection of Vectors',
@@ -221,12 +214,8 @@ def main():
                                              zaxis_title='Component 3'))
                 st.plotly_chart(fig)
             else:
-                pca_model = PCA(n_components=2)
-                pca_results = pca_model.fit_transform(features)
-
                 result_df = pd.DataFrame(pca_results, columns=['Component 1', 'Component 2'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter(result_df, x='Component 1', y='Component 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='2D PCA Projection of Vectors',
@@ -236,7 +225,6 @@ def main():
 
         elif analysis_choice == "VAE":
             vae_latent_space = vae_latent
-
             if dimensionality == "3D":
                 if vae_latent_space.shape[1] == 3:
                     vae_3d_results = vae_latent_space[:, :3]
@@ -245,7 +233,6 @@ def main():
                     vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
                 result_df = pd.DataFrame(vae_3d_results, columns=['Component 1', 'Component 2', 'Component 3'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter_3d(result_df, x='Component 1', y='Component 2', z='Component 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='3D VAE Projection of Vectors',
@@ -257,7 +244,6 @@ def main():
                 vae_2d_results = vae_latent_space[:, :2]
                 result_df = pd.DataFrame(vae_2d_results, columns=['Component 1', 'Component 2'])
                 result_df['Label'] = labels.astype(str)
-
                 fig = px.scatter(result_df, x='Component 1', y='Component 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
                 fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                 fig.update_layout(title='2D VAE Projection of Vectors',
@@ -271,3 +257,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
