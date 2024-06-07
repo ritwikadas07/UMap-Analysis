@@ -51,7 +51,7 @@ def load_animal_descriptions():
     return tfidf_df, labels, df
 
 def load_naics_codes():
-    df = pd.read_csv('naics_codes_sampled.csv')
+    df = pd.read_csv('naics_codes.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -59,7 +59,7 @@ def load_naics_codes():
     return tfidf_df, labels, df
 
 def load_financial_statements():
-    df = pd.read_csv('financial_statements_filtered.csv')
+    df = pd.read_csv('financial_statements_50_companies.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
