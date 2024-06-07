@@ -1,92 +1,51 @@
 NAICS Code,Description
-111110,Soybean Farming
-111120,Oilseed (except Soybean) Farming
-111130,Dry Pea and Bean Farming
-111140,Wheat Farming
-111150,Corn Farming
-111160,Rice Farming
-111191,Oilseed and Grain Combination Farming
-111199,All Other Grain Farming
-111211,Potato Farming
-111219,Other Vegetable (except Potato) and Melon Farming
-111310,Orange Groves
-111320,Citrus (except Orange) Groves
-111331,Apple Orchards
-111332,Grape Vineyards
-111333,Strawberry Farming
-111334,Berry (except Strawberry) Farming
-111335,Tree Nut Farming
-111336,Fruit and Tree Nut Combination Farming
-111339,Other Noncitrus Fruit Farming
-111411,Mushroom Production
-111419,Other Food Crops Grown Under Cover
-111421,Nursery and Tree Production
-111422,Floriculture Production
-111910,Tobacco Farming
-111920,Cotton Farming
-111930,Sugarcane Farming
-111940,Hay Farming
-111991,Sugar Beet Farming
-111992,Peanut Farming
-111998,All Other Miscellaneous Crop Farming
-112111,"Beef Cattle Ranching and Farming, including Feedlots"
-112112,Cattle Feedlots
-112120,Dairy Cattle and Milk Production
-112130,Dual-Purpose Cattle Ranching and Farming
-112210,Hog and Pig Farming
-112310,Chicken Egg Production
-112320,Broilers and Other Meat Type Chicken Production
-112330,Turkey Production
-112340,Poultry Hatcheries
-112390,Other Poultry Production
-112410,Sheep Farming
-112420,Goat Farming
-112511,Finfish Farming and Fish Hatcheries
-112512,Shellfish Farming
-112519,Other Animal Aquaculture
-112910,Apiculture
-112920,Horses and Other Equine Production
-112930,Fur-Bearing Animal and Rabbit Production
-112990,All Other Animal Production
-113110,Timber Tract Operations
-113210,Forest Nurseries and Gathering of Forest Products
-113310,Logging
-114111,Finfish Fishing
-114112,Shellfish Fishing
-114119,Other Marine Fishing
-114210,Hunting and Trapping
-115111,Cotton Ginning
-115112,"Soil Preparation, Planting, and Cultivating"
-115113,"Crop Harvesting, Primarily by Machine"
-115114,Postharvest Crop Activities (except Cotton Ginning)
-115115,Farm Labor Contractors and Crew Leaders
-115116,Farm Management Services
-115210,Support Activities for Animal Production
-115310,Support Activities for Forestry
-211120,Crude Petroleum Extraction
-211130,Natural Gas Extraction
-212111,Bituminous Coal and Lignite Surface Mining
-212112,Bituminous Coal Underground Mining
-212113,Anthracite Mining
-212210,Iron Ore Mining
-212221,Gold Ore Mining
-212222,Silver Ore Mining
-212230,"Copper, Nickel, Lead, and Zinc Mining"
-212291,Uranium-Radium-Vanadium Ore Mining
-212299,All Other Metal Ore Mining
-212311,Dimension Stone Mining and Quarrying
-212312,Crushed and Broken Limestone Mining and Quarrying
-212313,Crushed and Broken Granite Mining and Quarrying
-212319,Other Crushed and Broken Stone Mining and Quarrying
-212321,Construction Sand and Gravel Mining
-212322,Industrial Sand Mining
-212324,Kaolin and Ball Clay Mining
-212325,Clay and Ceramic and Refractory Minerals Mining
-212391,"Potash, Soda, and Borate Mineral Mining"
-212392,Phosphate Rock Mining
-212399,All Other Nonmetallic Mineral Mining
-213111,Drilling Oil and Gas Wells
-213112,Support Activities for Oil and Gas Operations
-213113,Support Activities for Coal Mining
-213114,Support Activities for Metal Mining
-213115,Support Activities for Nonmetallic Minerals (except Fuels) Mining
+111110,Wheat Farming - This industry comprises establishments primarily engaged in growing wheat and/or producing wheat seeds.
+112120,Dairy Cattle and Milk Production - This industry comprises establishments primarily engaged in milking dairy cattle.
+113110,Timber Tract Operations - This industry comprises establishments primarily engaged in the operation of timber tracts for the purpose of selling standing timber.
+114210,Hunting and Trapping - This industry comprises establishments primarily engaged in commercial hunting and trapping.
+115310,"Support Activities for Forestry - This industry comprises establishments primarily engaged in performing support activities related to timber production, wood technology, forestry economics, and forest protection."
+211120,"Natural Gas Extraction - This industry comprises establishments primarily engaged in the exploration, development, and production of natural gas."
+221310,Water Supply and Irrigation Systems - This industry comprises establishments primarily engaged in operating water treatment plants and water supply systems.
+236220,"Commercial and Institutional Building Construction - This industry comprises establishments primarily responsible for the construction (including new work, additions, alterations, maintenance, and repairs) of commercial and institutional buildings."
+237310,"Highway, Street, and Bridge Construction - This industry comprises establishments primarily engaged in the construction of highways (including elevated), streets, roads, airport runways, public sidewalks, or bridges."
+238210,Electrical Contractors and Other Wiring Installation Contractors - This industry comprises establishments primarily engaged in installing and servicing electrical wiring and equipment.
+311511,Fluid Milk Manufacturing - This industry comprises establishments primarily engaged in manufacturing fluid milk and cream from raw milk and/or processed milk products.
+312120,"Breweries - This industry comprises establishments primarily engaged in brewing beer, ale, malt liquors, and nonalcoholic beer."
+313110,"Fiber, Yarn, and Thread Mills - This industry comprises establishments primarily engaged in spinning yarn from fibers and/or manufacturing thread of any fiber."
+314910,Textile Bag and Canvas Mills - This industry comprises establishments primarily engaged in manufacturing textile bags or canvases.
+315210,Cut and Sew Apparel Contractors - This industry comprises establishments primarily engaged in manufacturing cut and sew apparel.
+321113,"Sawmills - This industry comprises establishments primarily engaged in sawing dimension lumber, boards, beams, timbers, poles, ties, shingles, shakes, siding, and wood chips from logs and bolts."
+322121,Paper (except Newsprint) Mills - This industry comprises establishments primarily engaged in manufacturing paper (except newsprint) and paperboard.
+323111,Commercial Printing (except Screen and Books) - This industry comprises establishments primarily engaged in commercial printing (except screen and books).
+324110,Petroleum Refineries - This industry comprises establishments primarily engaged in refining crude petroleum into refined petroleum.
+325120,Industrial Gas Manufacturing - This industry comprises establishments primarily engaged in manufacturing industrial organic and inorganic gases.
+326111,Plastics Material and Resin Manufacturing - This industry comprises establishments primarily engaged in manufacturing plastics materials and resins.
+327320,Ready-Mix Concrete Manufacturing - This industry comprises establishments primarily engaged in manufacturing ready-mix concrete and delivering it to purchasers in a plastic and unhardened state.
+331110,Iron and Steel Mills and Ferroalloy Manufacturing - This industry comprises establishments primarily engaged in manufacturing iron and steel and/or alloys.
+332710,Machine Shops - This industry comprises establishments primarily engaged in machining precision turned products or precision machining parts.
+333120,Construction Machinery Manufacturing - This industry comprises establishments primarily engaged in manufacturing construction machinery.
+334111,Electronic Computer Manufacturing - This industry comprises establishments primarily engaged in manufacturing and/or assembling electronic computers.
+335121,Residential Electric Lighting Fixture Manufacturing - This industry comprises establishments primarily engaged in manufacturing residential electric lighting fixtures.
+336120,Heavy Duty Truck Manufacturing - This industry comprises establishments primarily engaged in manufacturing heavy-duty trucks.
+337110,Wood Kitchen Cabinet and Countertop Manufacturing - This industry comprises establishments primarily engaged in manufacturing wood or non-wood kitchen cabinets and countertops.
+339112,Surgical and Medical Instrument Manufacturing - This industry comprises establishments primarily engaged in manufacturing medical instruments and devices.
+423110,Automobile and Other Motor Vehicle Merchant Wholesalers - This industry comprises establishments primarily engaged in the merchant wholesale distribution of motor vehicles.
+424120,Drugs and Druggists' Sundries Merchant Wholesalers - This industry comprises establishments primarily engaged in the merchant wholesale distribution of drugs and druggists' sundries.
+425110,Business to Business Electronic Markets - This industry comprises establishments primarily engaged in bringing together buyers and sellers of goods using the internet or other electronic means.
+441110,New Car Dealers - This industry comprises establishments primarily engaged in retailing new automobiles and light trucks.
+442110,Furniture Stores - This industry comprises establishments primarily engaged in retailing new furniture.
+444110,Home Centers - This industry comprises establishments primarily engaged in retailing a general line of home repair and improvement materials.
+445110,Supermarkets and Other Grocery (except Convenience) Stores - This industry comprises establishments primarily engaged in retailing a general line of food products.
+446110,Pharmacies and Drug Stores - This industry comprises establishments primarily engaged in retailing prescription or nonprescription drugs and medicines.
+447110,"Gasoline Stations with Convenience Stores - This industry comprises establishments primarily engaged in retailing automotive fuels (e.g., gasoline, diesel fuel) in combination with convenience store or food mart items."
+448110,Men's Clothing Stores - This industry comprises establishments primarily engaged in retailing a general line of men's and boys' clothing.
+451110,Sporting Goods Stores - This industry comprises establishments primarily engaged in retailing new sporting goods.
+452110,"Department Stores - This industry comprises establishments primarily engaged in retailing a wide range of merchandise, typically organized into departments."
+453110,"Florists - This industry comprises establishments primarily engaged in retailing cut flowers, potted plants, and floral arrangements."
+454110,Mail-Order Houses - This industry comprises establishments primarily engaged in retailing all types of merchandise using mail catalogs or television programs.
+481111,Scheduled Passenger Air Transportation - This industry comprises establishments primarily engaged in providing air transportation of passengers.
+482111,Line-Haul Railroads - This industry comprises establishments primarily engaged in providing rail transportation of passengers and/or cargo using railroad rolling stock.
+483111,"Deep Sea, Coastal, and Great Lakes Water Transportation - This industry comprises establishments primarily engaged in providing deep sea, coastal, and Great Lakes water transportation of cargo."
+484110,"General Freight Trucking, Local - This industry comprises establishments primarily engaged in providing local general freight trucking."
+485111,Urban Transit Systems - This industry comprises establishments primarily engaged in operating local and suburban passenger transit systems over regular routes and on regular schedules.
+486110,Pipeline Transportation of Crude Oil - This industry comprises establishments primarily engaged in the pipeline transportation of crude oil.
