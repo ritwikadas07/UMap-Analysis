@@ -162,8 +162,8 @@ def app():
     analysis_choice = st.sidebar.selectbox("Select analysis type", analysis_types)
     dimensionality = st.sidebar.selectbox("Select dimensionality", ["2D", "3D"])
 
-    if dataset_choice == "Upload your own TSV file":
-        uploaded_file = st.sidebar.file_uploader("Upload the TSV file", type="tsv")
+    if dataset_choice == "Upload your own CSV file":
+        uploaded_file = st.sidebar.file_uploader("Upload the TSV file", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file, sep='\t')
             st.write("### First 10 Lines of the Uploaded Data")
