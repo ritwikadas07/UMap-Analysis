@@ -108,37 +108,50 @@ def plot_label_clusters(vae_encoder, data, labels, color_map):
     st.pyplot(plt)
 
 def intro():
-    st.title("VectorViz: Exploring Vector Projections")
-    st.write("""
-             
-    **Author:** Ritwika Das for MQube.
-    **Mentor and Co-Author:** Rajarshi Das
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>VectorViz: Exploring Vector Projections</h1>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='font-size: 20px; text-align: center;'>
+        <b>Author:</b> Ritwika Das for MQube.<br>
+        <b>Mentor and Co-Author:</b> Rajarshi Das
+    </div>
+    <hr style="border:1px solid #4CAF50">
+    <p style='font-size: 16px; text-align: justify;'>
+        Welcome to VectorViz, an interactive tool designed to help you visualize vector projections using various dimensionality reduction techniques.
+        This application has evolved through several versions, each adding new features and datasets for a more comprehensive analysis experience.
+    </p>
+    <div style='font-size: 16px;'>
+        <b>Version 1: May 17th 2024: CSV File Upload for UMAP and PCA Analysis (3D)</b><br>
+        In the initial version, VectorViz allowed users to upload their CSV files and perform 3D analysis using UMAP and PCA. This laid the foundation for visualizing complex datasets in a three-dimensional space.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 2: May 20th, 2024: Addition of VAE Analysis</b><br>
+        Building on the initial capabilities, the second version introduced Variational Autoencoder (VAE) analysis, providing users with an advanced tool for uncovering the latent structures within their data.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 3: May 22nd, 2024: Integration of Animal Descriptions</b><br>
+        In the third version, we enriched the application by adding a dataset of 100 sentences describing various animals. This enhancement enabled users to perform UMAP and PCA analyses in 3D on a more diverse and text-based dataset.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 4: May 24th, 2024: NAICS Codes and Financial Statements</b><br>
+        The fourth version expanded the dataset options by including NAICS codes and financial statements consisting of multiple sentences. Users could now apply UMAP, PCA, and VAE analyses in 3D on these new datasets, broadening the application’s utility for business and economic data.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 5: May 30th, 2024: Inclusion of MNIST Digits and Fashion Datasets</b><br>
+        In the fifth version, we introduced the popular MNIST datasets, covering both digits and fashion items. These datasets allowed users to explore their data in 3D, providing a new dimension to image-based analysis.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 6: June 3rd, 2024: 2D Latent Space Visualization for Digits MNIST</b><br>
+        Recognizing the importance of 2D visualization, the sixth version added the capability to display the 2D latent space of the Digits MNIST dataset, enabling users to observe and analyze data clusters more easily.
+    </div>
+    <div style='font-size: 16px; margin-top: 10px;'>
+        <b>Version 7: June 7th, 2024: 2D and 3D Dimensionality Reduction Options</b><br>
+        The latest version gives users the flexibility to choose between 2D and 3D visualizations for their dimensionality reduction analyses, whether using UMAP, PCA, or VAE. This enhancement ensures that users can tailor their analysis to their specific needs and preferences.
+    </div>
+    """, unsafe_allow_html=True)
     
-    Welcome to VectorViz, an interactive tool designed to help you visualize vector projections using various dimensionality reduction techniques. This application has evolved through several versions, each adding new features and datasets for a more comprehensive analysis experience.
-    
-    **Version 1: May 17th 2024: CSV File Upload for UMAP and PCA Analysis (3D)**  
-    In the initial version, VectorViz allowed users to upload their CSV files and perform 3D analysis using UMAP and PCA. This laid the foundation for visualizing complex datasets in a three-dimensional space.
-    
-    **Version 2: May 20th, 2024Addition of VAE Analysis**  
-    Building on the initial capabilities, the second version introduced Variational Autoencoder (VAE) analysis, providing users with an advanced tool for uncovering the latent structures within their data.
-    
-    **Version 3: May 22nd, 2024, Integration of Animal Descriptions**  
-    In the third version, we enriched the application by adding a dataset of 100 sentences describing various animals. This enhancement enabled users to perform UMAP and PCA analyses in 3D on a more diverse and text-based dataset.
-    
-    **Version 4: May 24th, 2024, NAICS Codes and Financial Statements**  
-    The fourth version expanded the dataset options by including NAICS codes and financial statements consisting of multiple sentences. Users could now apply UMAP, PCA, and VAE analyses in 3D on these new datasets, broadening the application’s utility for business and economic data.
-    
-    **Version 5: May 30th, 2024, Inclusion of MNIST Digits and Fashion Datasets**  
-    In the fifth version, we introduced the popular MNIST datasets, covering both digits and fashion items. These datasets allowed users to explore their data in 3D, providing a new dimension to image-based analysis.
-    
-    **Version 6: June 3rd, 2024, 2D Latent Space Visualization for Digits MNIST**  
-    Recognizing the importance of 2D visualization, the sixth version added the capability to display the 2D latent space of the Digits MNIST dataset, enabling users to observe and analyze data clusters more easily.
-    
-    **Version 7: June 7th, 2024, 2D and 3D Dimensionality Reduction Options**  
-    The latest version gives users the flexibility to choose between 2D and 3D visualizations for their dimensionality reduction analyses, whether using UMAP, PCA, or VAE. This enhancement ensures that users can tailor their analysis to their specific needs and preferences.
-    """)
-    if st.button('Go to App'):
-        st.session_state['page'] = 'app'
+    if st.button("Go to App"):
+        st.session_state.page = "app"
+
 
 def app():
     st.sidebar.title("Dataset and Analysis Selection")
