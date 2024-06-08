@@ -50,7 +50,7 @@ def load_animal_descriptions():
     return tfidf_df, labels, df
 
 def load_naics_codes():
-    df = pd.read_csv('naics_codes.csv')
+    df = pd.read_csv('naics_codes_sampled.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["NAICS Code"], columns=vectorizer.get_feature_names_out())
@@ -58,7 +58,7 @@ def load_naics_codes():
     return tfidf_df, labels, df
 
 def load_financial_statements():
-    df = pd.read_csv('financial_statements_50_companies.csv')
+    df = pd.read_csv('financial_statements_filtered.csv')
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(df["Description"])
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), index=df["Company"], columns=vectorizer.get_feature_names_out())
@@ -107,44 +107,52 @@ def plot_label_clusters(vae_encoder, data, labels, color_map):
     st.pyplot(plt)
 
 def main():
-    st.title("VectorViz: Exploring Vector Projections")
-    st.write("""
-    Welcome to VectorViz, an interactive tool for visualizing vector projections using various dimensionality reduction techniques. 
-    This app allows you to upload your own dataset or choose from several predefined ones. 
-    Select an analysis method (PCA, UMAP, or VAE) and visualize the data in 2D or 3D space.
-    
-    **Author:** Ritwika Das  
-    **Mentor and Co-Author:** Rajarshi Das
-    """)
+    if 'page' not in st.session_state:
+        st.session_state.page = 'intro'
 
-    st.sidebar.title("Dataset and Analysis Selection")
-    datasets = ["Digits MNIST", "Fashion MNIST", "Animal Descriptions", "NAICS Codes", "Financial Statements", "Upload your own TSV file"]
-    dataset_choice = st.sidebar.selectbox("Choose a dataset", datasets)
-    color_map = st.sidebar.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
-    analysis_types = ["UMAP", "PCA", "VAE"]
-    analysis_choice = st.sidebar.selectbox("Select analysis type", analysis_types)
-    dimensionality = st.sidebar.selectbox("Select dimensionality", ["2D", "3D"])
+    if st.session_state.page == 'intro':
+        st.title("VectorViz: Exploring Vector Projections")
+        st.write("""
+        Welcome to VectorViz, an interactive tool for visualizing vector projections using various dimensionality reduction techniques. 
+        This app allows you to upload your own dataset or choose from several predefined ones. 
+        Select an analysis method (PCA, UMAP, or VAE) and visualize the data in 2D or 3D space.
 
-    if dataset_choice == "Upload your own TSV file":
-        uploaded_file = st.sidebar.file_uploader("Upload the TSV file", type="tsv")
-        if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file, sep='\t')
-            st.write("### First 10 Lines of the Uploaded Data")
-            st.write(df.head(10))
-            numeric_df = df.select_dtypes(include=[np.number])
-            if 'label' in df.columns:
-                labels = df['label']
-                features = numeric_df.drop(columns=['label'])
-            elif 'Animal' in df.columns:
-                labels = df['Animal']
-                features = numeric_df
-            else:
-                labels = df.index
-                features = numeric_df
-    else:
-        submit = st.sidebar.button("Submit")
+        **Author:** Ritwika Das  
+        **Mentor and Co-Author:** Rajarshi Das
+        """)
+        if st.button("Go to Analysis"):
+            st.session_state.page = 'analysis'
 
-        if submit:
+    if st.session_state.page == 'analysis':
+        st.title("Dataset and Analysis Selection")
+        datasets = ["Digits MNIST", "Fashion MNIST", "Animal Descriptions", "NAICS Codes", "Financial Statements", "Upload your own TSV file"]
+        dataset_choice = st.selectbox("Choose a dataset", datasets)
+        color_map = st.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
+        analysis_types = ["UMAP", "PCA", "VAE"]
+        analysis_choice = st.selectbox("Select analysis type", analysis_types)
+        dimensionality = st.selectbox("Select dimensionality", ["2D", "3D"])
+        submit = st.button("Submit")
+
+        if dataset_choice == "Upload your own TSV file":
+            uploaded_file = st.file_uploader("Upload the TSV file", type="tsv")
+            if uploaded_file is not None:
+                df = pd.read_csv(uploaded_file, sep='\t')
+                st.write("### First 10 Lines of the Uploaded Data")
+                st.write(df.head(10))
+
+                numeric_df = df.select_dtypes(include=[np.number])
+
+                if 'label' in df.columns:
+                    labels = df['label']
+                    features = numeric_df.drop(columns=['label'])
+                elif 'Animal' in df.columns:
+                    labels = df['Animal']
+                    features = numeric_df
+                else:
+                    labels = df.index
+                    features = numeric_df
+
+        if submit and 'features' in locals() and 'labels' in locals():
             if dataset_choice == "Digits MNIST":
                 st.write("Using the Digits MNIST dataset.")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -179,9 +187,9 @@ def main():
                     axes[i].axis('off')
                 st.pyplot(fig)
 
-                numeric_df = df.select_dtypes(include=[np.number])
+                numeric_df = df.select_dtypes(include([np.number]))
                 labels = df['label']
-                features = numeric_df.drop(columns=['label'])
+                features = numeric_df.drop(columns(['label']))
 
             elif dataset_choice == "Animal Descriptions":
                 st.write("Using the Animal Descriptions dataset.")
