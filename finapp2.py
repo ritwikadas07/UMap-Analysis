@@ -148,7 +148,7 @@ def intro():
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>Version 8: June 11th, 2024: Setting Default homepage, showing TFIDF vectorization and Dataset Descriptions.</b><br>
-        The latest version gives users the view of the MNIST 2D dataset as default while operating the application and adds descriptions of the datasets for user's convenience. It also shows the values of vectors after TFIDF is applied.
+        The latest version gives users the view of the MNIST 2D dataset as default while operating the application and adds descriptions of the datasets for user's convenience. It also shows the values of vectors after TF-IDF is applied.
     </div>
     """, unsafe_allow_html=True)
     
@@ -292,9 +292,7 @@ def app():
                     result_df['Label'] = labels.astype(str)
                     fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                    fig.update_layout(title='2D PCA Projection of Vectors',
-                                      xaxis_title='Eigenvector 1',
-                                      yaxis_title='Eigenvector 2')
+                    fig.update_layout(title='2D PCA Projection of Vectors', xaxis_title='Eigenvector 1',yaxis_title='Eigenvector 2')
                     st.plotly_chart(fig)
 
             elif analysis_choice == "VAE":
@@ -355,7 +353,7 @@ def default_view():
     pca_results = pca_model.fit_transform(features)
     result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
     result_df['Label'] = labels.astype(str)
-    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='Viridis')
+    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
     fig.update_layout(title='2D PCA Projection of Digits MNIST',
                       xaxis_title='Eigenvector 1',
@@ -364,7 +362,7 @@ def default_view():
 
 if __name__ == "__main__":
     if 'page' not in st.session_state:
-        st.session_state['page'] = 'default'
+        st.session_state['page'] = 'intro'
 
     if st.session_state['page'] == 'intro':
         intro()
@@ -373,4 +371,5 @@ if __name__ == "__main__":
     else:
         default_view()
 
+                                     
 
