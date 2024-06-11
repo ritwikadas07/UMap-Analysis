@@ -230,14 +230,14 @@ def app():
                 st.write("Using the NAICS Codes dataset.")
                 features, labels, df = load_naics_codes()
                 st.write("### NAICS Codes Dataset")
-                st.write(df.head(20))
+                st.write(df)
 
             elif dataset_choice == "Financial Statements":
                 st.write("Using the Financial Statements dataset.")
                 features, labels, df = load_financial_statements()
                 if features is not None and labels is not None:
                     st.write("### Financial Statements Dataset")
-                    st.write(df.head(20))
+                    st.write(df)
 
             if analysis_choice == "UMAP":
                 umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
