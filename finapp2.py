@@ -154,6 +154,7 @@ def intro():
     
     if st.button("Go to App"):
         st.session_state.page = "app"
+        st.experimental_rerun()
 
 def app():
     st.sidebar.title("Dataset and Analysis Selection")
@@ -183,7 +184,9 @@ def app():
                 labels = df.index
                 features = numeric_df
     else:
-        if submit or st.session_state.page == "default":
+        if submit or 'submitted' in st.session_state:
+            st.session_state['submitted'] = True
+
             if dataset_choice == "Digits MNIST":
                 st.write("Using the Digits MNIST dataset.")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -206,16 +209,17 @@ def app():
                 labels = pd.Series(labels)
 
                 # Default analysis: PCA 2D projection
-                pca_model = PCA(n_components=2)
-                pca_results = pca_model.fit_transform(features)
-                result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                result_df['Label'] = labels.astype(str)
-                fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
-                fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                fig.update_layout(title='2D PCA Projection of Digits MNIST',
-                                  xaxis_title='Eigenvector 1',
-                                  yaxis_title='Eigenvector 2')
-                st.plotly_chart(fig)
+                if not submit:
+                    pca_model = PCA(n_components=2)
+                    pca_results = pca_model.fit_transform(features)
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of Digits MNIST',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
 
             elif dataset_choice == "Fashion MNIST":
                 st.write("Using the Fashion MNIST dataset.")
@@ -377,11 +381,13 @@ def default_view():
 if __name__ == "__main__":
     if 'page' not in st.session_state:
         st.session_state['page'] = 'intro'
+        st.session_state['submitted'] = False
 
     if st.session_state['page'] == 'intro':
         intro()
     elif st.session_state['page'] == 'app':
+        if not st.session_state['submitted']:
+            default_view()
         app()
-    else:
-        default_view()
+
 
