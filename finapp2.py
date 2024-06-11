@@ -205,6 +205,18 @@ def app():
                 features = numeric_df
                 labels = pd.Series(labels)
 
+                # Default analysis: PCA 2D projection
+                pca_model = PCA(n_components=2)
+                pca_results = pca_model.fit_transform(features)
+                result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                result_df['Label'] = labels.astype(str)
+                fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
+                fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                fig.update_layout(title='2D PCA Projection of Digits MNIST',
+                                  xaxis_title='Eigenvector 1',
+                                  yaxis_title='Eigenvector 2')
+                st.plotly_chart(fig)
+
             elif dataset_choice == "Fashion MNIST":
                 st.write("Using the Fashion MNIST dataset.")
                 df, images = load_fashion_mnist_dataset()
@@ -292,7 +304,9 @@ def app():
                     result_df['Label'] = labels.astype(str)
                     fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                    fig.update_layout(title='2D PCA Projection of Vectors', xaxis_title='Eigenvector 1',yaxis_title='Eigenvector 2')
+                    fig.update_layout(title='2D PCA Projection of Vectors',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
                     st.plotly_chart(fig)
 
             elif analysis_choice == "VAE":
@@ -370,6 +384,4 @@ if __name__ == "__main__":
         app()
     else:
         default_view()
-
-                                     
 
