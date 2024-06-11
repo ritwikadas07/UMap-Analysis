@@ -147,8 +147,8 @@ def intro():
         The latest version gives users the flexibility to choose between 2D and 3D visualizations for their dimensionality reduction analyses, whether using UMAP, PCA, or VAE. This enhancement ensures that users can tailor their analysis to their specific needs and preferences.
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
-        <b>Version         8: June 11th, 2024: Setting Default homepage, showing TFIDF vectorization and Dataset Descriptions.</b><br>
-        The latest version gives users the view of the MNIST 2D dataset as default while operating the application and adds description of the datasets for users' convenience. It also shows the values of vectors after TFIDF is applied.
+        <b>Version 8: June 11th, 2024: Setting Default homepage, showing TFIDF vectorization and Dataset Descriptions.</b><br>
+        The latest version gives users the view of the MNIST 2D dataset as default while operating the application and adds descriptions of the datasets for user's convenience. It also shows the values of vectors after TFIDF is applied.
     </div>
     """, unsafe_allow_html=True)
     
@@ -163,7 +163,7 @@ def app():
     analysis_choice = st.sidebar.selectbox("Select analysis type", analysis_types)
     dimensionality = st.sidebar.selectbox("Select dimensionality", ["2D", "3D"])
     color_map = st.sidebar.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
-
+    
     submit = st.sidebar.button("Submit")
 
     if dataset_choice == "Upload your own CSV file":
@@ -183,7 +183,7 @@ def app():
                 labels = df.index
                 features = numeric_df
     else:
-        if submit or st.session_state.page == "app":
+        if submit or st.session_state.page == "default":
             if dataset_choice == "Digits MNIST":
                 st.write("Using the Digits MNIST dataset.")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -355,7 +355,7 @@ def default_view():
     pca_results = pca_model.fit_transform(features)
     result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
     result_df['Label'] = labels.astype(str)
-    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
+    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale='Viridis')
     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
     fig.update_layout(title='2D PCA Projection of Digits MNIST',
                       xaxis_title='Eigenvector 1',
@@ -364,9 +364,9 @@ def default_view():
 
 if __name__ == "__main__":
     if 'page' not in st.session_state:
-        st.session_state['page'] = 'intro'
-        default_view()
-    elif st.session_state['page'] == 'intro':
+        st.session_state['page'] = 'default'
+
+    if st.session_state['page'] == 'intro':
         intro()
     elif st.session_state['page'] == 'app':
         app()
