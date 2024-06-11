@@ -1,401 +1,67 @@
-Company,Quarter,Revenue,Cost of Goods Sold,Operating Expenses,Net Income
-Company 1,Q1,9145,541,708,1050
-Company 1,Q2,8290,3816,1226,-843
-Company 1,Q3,3501,2302,2701,1092
-Company 1,Q4,9560,1541,738,476
-Company 2,Q1,6860,3886,1748,2028
-Company 2,Q2,6691,3057,1980,1721
-Company 2,Q3,7696,1810,1505,-297
-Company 2,Q4,7798,1400,1204,2928
-Company 3,Q1,1060,529,1363,576
-Company 3,Q2,4826,3102,851,171
-Company 3,Q3,5730,1315,379,1960
-Company 3,Q4,1946,975,355,1614
-Company 4,Q1,7385,1831,2693,240
-Company 4,Q2,9564,2063,945,-217
-Company 4,Q3,7498,1822,668,2011
-Company 4,Q4,2617,3967,1033,-417
-Company 5,Q1,7439,4832,472,2838
-Company 5,Q2,6421,4607,2869,25
-Company 5,Q3,4753,2977,1261,615
-Company 5,Q4,4686,2346,473,2313
-Company 6,Q1,5692,3766,1391,2157
-Company 6,Q2,2496,1905,1063,1748
-Company 6,Q3,5618,1613,2426,2241
-Company 6,Q4,5249,2602,1762,2524
-Company 7,Q1,1149,3716,918,933
-Company 7,Q2,8132,1185,763,1822
-Company 7,Q3,7044,3956,663,1053
-Company 7,Q4,6265,2443,845,2397
-Company 8,Q1,2495,1173,725,1722
-Company 8,Q2,2904,2460,2584,2573
-Company 8,Q3,5157,2022,2539,1495
-Company 8,Q4,6764,2624,2735,2079
-Company 9,Q1,4548,837,398,607
-Company 9,Q2,9945,3065,1827,-277
-Company 9,Q3,6655,720,2019,2201
-Company 9,Q4,8106,3730,1455,2951
-Company 10,Q1,8184,3013,1401,-765
-Company 10,Q2,8270,2392,920,647
-Company 10,Q3,8081,4196,2095,1992
-Company 10,Q4,6155,4191,975,1517
-Company 11,Q1,3080,777,422,2406
-Company 11,Q2,7033,4304,1554,-485
-Company 11,Q3,1610,508,865,620
-Company 11,Q4,2247,2926,970,-73
-Company 12,Q1,9142,1940,2391,1166
-Company 12,Q2,3069,3615,2461,1499
-Company 12,Q3,5147,3355,1034,-56
-Company 12,Q4,7536,4438,2019,2110
-Company 13,Q1,7928,2568,706,1870
-Company 13,Q2,8422,3514,903,372
-Company 13,Q3,8098,4028,1126,1807
-Company 13,Q4,3135,3244,302,-514
-Company 14,Q1,4994,1980,622,-422
-Company 14,Q2,3905,1592,1179,1058
-Company 14,Q3,5439,4200,365,666
-Company 14,Q4,4059,4177,2162,839
-Company 15,Q1,9092,3589,2311,2334
-Company 15,Q2,7649,1896,434,1232
-Company 15,Q3,8978,2426,1304,-388
-Company 15,Q4,7825,2848,1793,1211
-Company 16,Q1,5886,2444,1077,2699
-Company 16,Q2,7112,702,1635,1476
-Company 16,Q3,6546,3467,778,1215
-Company 16,Q4,7854,3395,2668,1358
-Company 17,Q1,5134,3073,772,1291
-Company 17,Q2,6447,3355,2168,2497
-Company 17,Q3,1322,2044,2070,828
-Company 17,Q4,2194,1487,2544,2175
-Company 18,Q1,1366,3813,767,-95
-Company 18,Q2,3314,4319,967,1893
-Company 18,Q3,8104,3988,655,743
-Company 18,Q4,1459,4071,384,762
-Company 19,Q1,7159,3749,952,-116
-Company 19,Q2,3759,2732,1059,-750
-Company 19,Q3,9574,503,2742,1963
-Company 19,Q4,2814,4791,936,2038
-Company 20,Q1,2286,4239,2935,2581
-Company 20,Q2,2497,663,606,2985
-Company 20,Q3,4078,4638,2709,1672
-Company 20,Q4,4906,932,2412,-532
-Company 21,Q1,8620,1840,1575,1073
-Company 21,Q2,2189,1638,287,2180
-Company 21,Q3,4686,4702,602,338
-Company 21,Q4,7542,2822,2339,-266
-Company 22,Q1,2181,4697,369,-313
-Company 22,Q2,3412,4388,1542,934
-Company 22,Q3,6157,4419,317,2758
-Company 22,Q4,2153,4098,1097,-766
-Company 23,Q1,8094,1453,1399,-273
-Company 23,Q2,1651,3727,2381,-946
-Company 23,Q3,2129,2657,1589,2210
-Company 23,Q4,3150,865,1291,2527
-Company 24,Q1,5218,3153,1690,1239
-Company 24,Q2,9764,4632,1978,887
-Company 24,Q3,3992,925,2214,1413
-Company 24,Q4,6625,2010,2867,1345
-Company 25,Q1,5287,2107,1140,2030
-Company 25,Q2,7139,2736,1182,1527
-Company 25,Q3,4639,4180,2946,614
-Company 25,Q4,9158,2908,2912,1165
-Company 26,Q1,9155,1953,341,1336
-Company 26,Q2,8095,928,446,2568
-Company 26,Q3,2649,4150,1433,88
-Company 26,Q4,8267,1924,2633,691
-Company 27,Q1,3532,4308,2426,2152
-Company 27,Q2,4637,4590,2711,-948
-Company 27,Q3,6979,4977,963,-302
-Company 27,Q4,4729,2802,826,-637
-Company 28,Q1,3851,2244,533,2847
-Company 28,Q2,4390,4155,2813,170
-Company 28,Q3,6331,1479,1803,1752
-Company 28,Q4,8775,1621,966,2693
-Company 29,Q1,5857,850,472,1713
-Company 29,Q2,4226,3553,819,408
-Company 29,Q3,6330,1032,2319,-190
-Company 29,Q4,7132,1362,1176,1492
-Company 30,Q1,8460,1802,1085,631
-Company 30,Q2,7180,3434,427,2166
-Company 30,Q3,3444,1544,621,-788
-Company 30,Q4,7779,1779,2801,1794
-Company 31,Q1,7955,3240,392,-247
-Company 31,Q2,6619,1228,1221,884
-Company 31,Q3,6582,1278,269,380
-Company 31,Q4,8530,3064,517,478
-Company 32,Q1,2266,3976,532,-589
-Company 32,Q2,5247,1226,1380,1809
-Company 32,Q3,7299,4434,2404,-539
-Company 32,Q4,7720,2069,1290,-124
-Company 33,Q1,2939,1234,1471,1380
-Company 33,Q2,9533,3551,1720,-104
-Company 33,Q3,4919,2759,1245,1582
-Company 33,Q4,8837,3538,2635,1070
-Company 34,Q1,2680,947,2322,2174
-Company 34,Q2,2784,1944,2660,1856
-Company 34,Q3,6859,2981,1548,2239
-Company 34,Q4,6561,2829,1901,269
-Company 35,Q1,8225,1442,2387,2605
-Company 35,Q2,2523,2755,2997,1760
-Company 35,Q3,4972,1874,2580,48
-Company 35,Q4,7639,3755,1596,413
-Company 36,Q1,2926,3422,1340,-487
-Company 36,Q2,9033,1594,1430,2921
-Company 36,Q3,7151,4286,1136,887
-Company 36,Q4,2635,3489,2993,2838
-Company 37,Q1,8075,759,1963,2829
-Company 37,Q2,8291,4356,1300,-344
-Company 37,Q3,1144,4922,1414,2144
-Company 37,Q4,2449,2388,2234,-991
-Company 38,Q1,5598,4516,2226,807
-Company 38,Q2,1042,2599,1773,534
-Company 38,Q3,3573,1083,2312,218
-Company 38,Q4,7961,1239,1434,987
-Company 39,Q1,4076,849,743,1277
-Company 39,Q2,7134,2025,1210,1748
-Company 39,Q3,7708,2296,1748,109
-Company 39,Q4,1895,2226,1896,213
-Company 40,Q1,5222,1263,2820,2056
-Company 40,Q2,1326,642,1462,1888
-Company 40,Q3,7935,4776,2806,663
-Company 40,Q4,7397,2637,1767,1401
-Company 41,Q1,1827,4055,2820,2471
-Company 41,Q2,9694,940,1924,2259
-Company 41,Q3,4175,2867,529,299
-Company 41,Q4,1694,4845,1643,113
-Company 42,Q1,1122,1902,2420,1076
-Company 42,Q2,9764,3469,1842,665
-Company 42,Q3,7164,4530,1320,1538
-Company 42,Q4,1483,1326,2135,2987
-Company 43,Q1,1986,3915,1118,1564
-Company 43,Q2,3904,530,785,574
-Company 43,Q3,6674,4111,2928,2842
-Company 43,Q4,6784,2536,1892,1363
-Company 44,Q1,6146,2722,2460,937
-Company 44,Q2,8012,856,1345,-299
-Company 44,Q3,1162,4260,2682,-363
-Company 44,Q4,6939,2426,721,2221
-Company 45,Q1,5485,2302,2441,-726
-Company 45,Q2,8415,527,356,1034
-Company 45,Q3,4799,1928,1863,1311
-Company 45,Q4,5526,1501,1754,744
-Company 46,Q1,3043,4054,2065,1483
-Company 46,Q2,6806,995,2557,2337
-Company 46,Q3,2905,3983,1313,-935
-Company 46,Q4,9976,2171,2854,613
-Company 47,Q1,2071,2210,1693,1516
-Company 47,Q2,7841,1684,445,608
-Company 47,Q3,2684,547,1559,1028
-Company 47,Q4,8958,1004,665,-554
-Company 48,Q1,4307,4371,1713,2980
-Company 48,Q2,6348,1187,2930,1281
-Company 48,Q3,7621,1300,2472,1739
-Company 48,Q4,9024,1165,2228,-299
-Company 49,Q1,3687,2859,624,183
-Company 49,Q2,3904,2056,2669,2947
-Company 49,Q3,7320,4835,1959,660
-Company 49,Q4,2439,2914,1830,-636
-Company 50,Q1,3905,4183,587,1769
-Company 50,Q2,4527,2632,1468,1885
-Company 50,Q3,8387,2442,2870,-612
-Company 50,Q4,2584,3176,485,2230
-Company 51,Q1,9315,3936,2963,-473
-Company 51,Q2,8088,4360,2786,-222
-Company 51,Q3,8697,2762,782,2704
-Company 51,Q4,6109,3638,328,2951
-Company 52,Q1,5381,1202,310,-204
-Company 52,Q2,3394,1034,1480,2766
-Company 52,Q3,1536,1577,918,1595
-Company 52,Q4,6440,507,366,706
-Company 53,Q1,6987,3577,252,2267
-Company 53,Q2,8668,1312,1088,-934
-Company 53,Q3,6210,4289,1320,746
-Company 53,Q4,4966,3350,2395,455
-Company 54,Q1,8682,1802,1797,812
-Company 54,Q2,2797,1964,2592,1039
-Company 54,Q3,3017,3286,2233,-71
-Company 54,Q4,5760,4817,1623,-221
-Company 55,Q1,2405,4082,2122,1836
-Company 55,Q2,4273,3483,425,-491
-Company 55,Q3,9504,2991,864,1137
-Company 55,Q4,9630,866,985,701
-Company 56,Q1,2442,4372,2010,302
-Company 56,Q2,1673,4443,2503,1634
-Company 56,Q3,2501,2349,885,1509
-Company 56,Q4,4121,2444,2716,-884
-Company 57,Q1,9966,4607,2591,1544
-Company 57,Q2,9515,4327,1905,1869
-Company 57,Q3,5850,2416,869,1334
-Company 57,Q4,6501,2208,2248,2765
-Company 58,Q1,7348,2853,2481,-231
-Company 58,Q2,2303,4644,2553,-695
-Company 58,Q3,4466,2959,2993,162
-Company 58,Q4,8562,3797,2209,2202
-Company 59,Q1,7959,861,2536,1860
-Company 59,Q2,1227,4057,1535,781
-Company 59,Q3,6084,1999,2451,2795
-Company 59,Q4,1928,4911,1119,-443
-Company 60,Q1,2257,765,2496,-24
-Company 60,Q2,2348,2333,2676,-729
-Company 60,Q3,2125,3896,1958,-405
-Company 60,Q4,7101,4617,2376,2031
-Company 61,Q1,2219,1524,1787,299
-Company 61,Q2,9045,4836,2289,851
-Company 61,Q3,9032,3330,475,-512
-Company 61,Q4,6416,1069,1222,956
-Company 62,Q1,2387,3979,2961,2369
-Company 62,Q2,4967,4428,2480,1107
-Company 62,Q3,1360,3529,1370,300
-Company 62,Q4,8853,4950,374,-691
-Company 63,Q1,9823,2600,2112,-351
-Company 63,Q2,7254,3215,368,-998
-Company 63,Q3,3762,4028,2775,1115
-Company 63,Q4,8784,3867,469,-508
-Company 64,Q1,9405,4000,2729,1247
-Company 64,Q2,1165,1522,1667,1424
-Company 64,Q3,6958,3803,2144,1918
-Company 64,Q4,8107,3526,2687,2720
-Company 65,Q1,9244,2496,1446,113
-Company 65,Q2,1055,3170,1212,2039
-Company 65,Q3,9846,4588,1389,2386
-Company 65,Q4,2264,2353,1544,929
-Company 66,Q1,6870,1229,260,-510
-Company 66,Q2,5061,667,212,91
-Company 66,Q3,1520,3656,1222,2461
-Company 66,Q4,4278,3547,630,-675
-Company 67,Q1,7926,3436,2689,931
-Company 67,Q2,8773,2602,2005,214
-Company 67,Q3,3638,4324,381,1760
-Company 67,Q4,7957,1981,1770,1318
-Company 68,Q1,2706,1631,1912,-613
-Company 68,Q2,1419,1655,1265,2746
-Company 68,Q3,5107,4988,289,2569
-Company 68,Q4,5990,1926,590,-465
-Company 69,Q1,1991,4605,2587,2412
-Company 69,Q2,3373,2257,1675,2726
-Company 69,Q3,9458,1077,1838,1418
-Company 69,Q4,6786,3749,2803,1339
-Company 70,Q1,3112,2795,1949,2336
-Company 70,Q2,6740,3903,1684,2227
-Company 70,Q3,1717,1601,2887,-256
-Company 70,Q4,3421,3802,2775,1582
-Company 71,Q1,8981,3604,2192,1975
-Company 71,Q2,4535,1693,2529,2551
-Company 71,Q3,2688,3722,2167,200
-Company 71,Q4,6479,4513,2672,138
-Company 72,Q1,5077,849,2938,-921
-Company 72,Q2,9218,2403,1318,-695
-Company 72,Q3,4970,2350,310,-489
-Company 72,Q4,5487,1007,2313,2399
-Company 73,Q1,3264,4185,2598,204
-Company 73,Q2,3456,3186,1944,1214
-Company 73,Q3,7302,2261,642,792
-Company 73,Q4,1760,1291,1637,2786
-Company 74,Q1,6840,3058,2638,2093
-Company 74,Q2,5933,3420,981,1372
-Company 74,Q3,6512,4850,1796,-106
-Company 74,Q4,3139,2138,2043,-34
-Company 75,Q1,6297,1616,2940,2976
-Company 75,Q2,6636,1547,1482,2374
-Company 75,Q3,2344,1598,2849,556
-Company 75,Q4,4942,2776,1083,-880
-Company 76,Q1,6162,1339,1129,-913
-Company 76,Q2,7132,1408,1141,1745
-Company 76,Q3,7631,4964,2407,2832
-Company 76,Q4,7780,937,2889,-127
-Company 77,Q1,2519,1964,2210,627
-Company 77,Q2,3300,4200,282,2992
-Company 77,Q3,1236,1105,1797,2809
-Company 77,Q4,5980,4240,1820,320
-Company 78,Q1,6246,1034,2769,2570
-Company 78,Q2,8333,693,1224,2671
-Company 78,Q3,8764,4893,1325,-249
-Company 78,Q4,8914,4803,1315,133
-Company 79,Q1,7056,4949,415,169
-Company 79,Q2,4068,4820,1561,1242
-Company 79,Q3,7609,2153,1322,2629
-Company 79,Q4,5091,3463,1628,2079
-Company 80,Q1,4179,1535,1597,-463
-Company 80,Q2,2733,1998,1894,1548
-Company 80,Q3,2461,2920,2425,-617
-Company 80,Q4,2943,3441,1255,-694
-Company 81,Q1,9194,3229,490,594
-Company 81,Q2,6155,1662,806,-80
-Company 81,Q3,7091,850,2169,1442
-Company 81,Q4,4733,3032,1353,-426
-Company 82,Q1,6182,3202,443,-460
-Company 82,Q2,5723,4479,2238,1573
-Company 82,Q3,3024,595,976,2410
-Company 82,Q4,9158,1782,1055,1163
-Company 83,Q1,9614,1803,2447,1322
-Company 83,Q2,9007,1252,1194,-173
-Company 83,Q3,5073,3880,2606,2340
-Company 83,Q4,8067,2532,1208,-132
-Company 84,Q1,8775,907,2642,-76
-Company 84,Q2,5474,2935,1606,-648
-Company 84,Q3,2828,3574,1112,-904
-Company 84,Q4,8894,4591,2210,-116
-Company 85,Q1,8109,3866,735,2994
-Company 85,Q2,5865,1289,499,1357
-Company 85,Q3,7665,1218,2380,785
-Company 85,Q4,2697,3603,1100,1493
-Company 86,Q1,5793,1087,2118,77
-Company 86,Q2,7628,4039,2244,244
-Company 86,Q3,6855,2690,1478,130
-Company 86,Q4,7286,780,1041,1426
-Company 87,Q1,7589,3082,2219,-931
-Company 87,Q2,2500,4874,1795,99
-Company 87,Q3,9358,3275,2025,575
-Company 87,Q4,3728,2287,694,1097
-Company 88,Q1,4758,1621,2691,616
-Company 88,Q2,8665,3731,565,-521
-Company 88,Q3,8638,1410,2821,747
-Company 88,Q4,8923,4657,1196,1605
-Company 89,Q1,5621,4970,1198,2414
-Company 89,Q2,8093,3525,1284,2478
-Company 89,Q3,2923,2895,1517,2807
-Company 89,Q4,6926,1079,2210,-151
-Company 90,Q1,8344,3256,2117,2307
-Company 90,Q2,2323,3340,878,1950
-Company 90,Q3,7420,2494,2137,1988
-Company 90,Q4,9442,4604,2520,-293
-Company 91,Q1,9259,1614,2359,-774
-Company 91,Q2,3013,1617,1592,2209
-Company 91,Q3,6961,3176,2387,-825
-Company 91,Q4,7204,4537,1933,2089
-Company 92,Q1,6892,3068,938,2503
-Company 92,Q2,5628,2264,1620,-451
-Company 92,Q3,5481,3794,2627,2263
-Company 92,Q4,6711,1574,603,-525
-Company 93,Q1,2136,2267,1025,2435
-Company 93,Q2,2510,4511,1878,1123
-Company 93,Q3,9941,2747,437,1938
-Company 93,Q4,8957,3886,1038,157
-Company 94,Q1,9408,3951,936,974
-Company 94,Q2,6252,510,403,269
-Company 94,Q3,5158,2308,483,-219
-Company 94,Q4,8037,1569,295,1439
-Company 95,Q1,8240,606,1015,889
-Company 95,Q2,4598,3052,2093,-986
-Company 95,Q3,2814,2854,2863,-835
-Company 95,Q4,8928,3791,1597,2136
-Company 96,Q1,5887,1521,1289,-306
-Company 96,Q2,7193,3658,2132,230
-Company 96,Q3,6382,3846,2820,16
-Company 96,Q4,3273,4354,1575,1080
-Company 97,Q1,4830,2348,2120,2532
-Company 97,Q2,8875,1728,1982,609
-Company 97,Q3,2232,2253,2043,-322
-Company 97,Q4,1234,827,2519,1203
-Company 98,Q1,9328,4383,2037,314
-Company 98,Q2,4371,2022,1909,-254
-Company 98,Q3,9062,4838,2516,-828
-Company 98,Q4,6796,3456,2444,-482
-Company 99,Q1,3187,4910,1505,1487
-Company 99,Q2,3670,3423,2614,-202
-Company 99,Q3,3395,1369,2891,2185
-Company 99,Q4,8266,3011,1786,935
-Company 100,Q1,6067,4741,2953,-1000
-Company 100,Q2,1253,755,2385,874
-Company 100,Q3,2016,1101,2321,-482
-Company 100,Q4,3074,711,2901,-973
+Company,Description
+Intel,"Intel reported a 9% year-over-year increase in revenue to $12.7 billion, but faced a GAAP loss per share of $0.09 due to ongoing restructuring and investments in their IDM 2.0 strategy aimed at regaining technology leadership."
+Kodak,"Kodak saw a 10% decline in revenue to $249 million, primarily due to lower sales volumes and higher costs associated with IT system investments. The company's gross profit percentage remained steady at 20%, reflecting efforts to improve operational efficiency and focus on innovation in print and advanced materials."
+Boeing,"Boeing reported a loss per share of $0.56, with revenue declining to $16.6 billion. This performance was largely impacted by lower deliveries of the 737 model and challenges related to the 737-9 grounding. The company is taking measures to strengthen quality and safety in its operations."
+Eli Lilly,"Eli Lilly posted robust growth, with Taltz and Humalog revenues increasing by 15% and 17% respectively, driven by higher demand and pricing adjustments. The company raised its full-year revenue guidance by $2 billion, bolstered by strong sales of new drugs like Mounjaro and Zepbound."
+Phillips 66,"Phillips 66 reported mixed results, with midstream earnings declining due to lower volumes and higher costs from winter storms, but saw a significant rise in its chemicals segment due to better margins and lower feedstock costs. The company continues to return value to shareholders through dividends and share repurchases."
+Morningstar,"Morningstar experienced a 13.2% increase in revenue to $542.8 million, driven by the performance of its PitchBook platform and Morningstar Wealth segments. Adjusted operating income and margins improved due to higher demand for data analytics and investment management services."
+American Airlines,"American Airlines reported a net loss of $312 million but achieved record first-quarter revenue of $12.6 billion. The company continues to focus on debt reduction and expects improved earnings per share in the subsequent quarters due to robust travel demand and strategic cost management."
+Microsoft,"Microsoft saw a 17% increase in revenue to $52.9 billion, driven by strong performance in its cloud computing segment. Net income rose to $19.3 billion, reflecting the company's effective cost management and innovative product offerings."
+Apple,"Apple reported a 9% increase in revenue to $89.6 billion, bolstered by strong iPhone sales and growth in its services segment. Net income was $23.6 billion, showing a robust performance across its hardware and software products."
+Amazon,"Amazon's revenue grew by 15% to $125.6 billion, driven by strong e-commerce sales and AWS growth. However, increased operational costs led to a net income decline to $8.1 billion."
+Google,"Google's parent company Alphabet saw a 12% increase in revenue to $74.9 billion, driven by strong ad sales and growth in cloud services. Net income was $19.9 billion, highlighting the company's solid market position."
+Facebook,"Facebook, now Meta Platforms, reported a 10% increase in revenue to $33.4 billion, driven by ad revenue growth and user engagement on its platforms. Net income rose to $9.9 billion, reflecting the company's strategic investments in the metaverse."
+Tesla,"Tesla's revenue surged by 24% to $19.1 billion, driven by strong vehicle deliveries and energy products. Net income was $2.7 billion, highlighting the company's growing market share and operational efficiencies."
+Netflix,"Netflix saw a 7% increase in revenue to $8.3 billion, with subscriber growth in international markets. Net income was $1.4 billion, reflecting the company's successful content strategy and cost management."
+Nvidia,"Nvidia's revenue grew by 22% to $8.9 billion, driven by strong demand for GPUs in gaming and data centers. Net income rose to $3.1 billion, showcasing the company's leadership in the semiconductor market."
+Samsung,"Samsung reported a 13% increase in revenue to $62.8 billion, driven by strong smartphone and semiconductor sales. Net income was $11.4 billion, reflecting the company's diversified product portfolio and market leadership."
+Sony,"Sony's revenue grew by 10% to $24.7 billion, driven by strong sales in its gaming and entertainment segments. Net income was $2.3 billion, highlighting the company's successful product launches and content offerings."
+IBM,"IBM saw a 5% increase in revenue to $18.7 billion, driven by growth in its cloud and cognitive software segments. Net income was $2.1 billion, reflecting the company's focus on high-margin businesses."
+Oracle,"Oracle reported a 7% increase in revenue to $11.2 billion, driven by strong cloud services and software sales. Net income was $3.4 billion, highlighting the company's successful transition to cloud computing."
+HP,"HP's revenue grew by 6% to $15.1 billion, driven by strong demand for PCs and printers. Net income was $1.2 billion, reflecting the company's effective cost management and product innovation."
+Cisco,"Cisco saw a 9% increase in revenue to $13.6 billion, driven by strong demand for networking and cybersecurity solutions. Net income was $3.0 billion, showcasing the company's market leadership and innovation."
+Adobe,"Adobe's revenue grew by 12% to $15.5 billion, driven by strong demand for its creative and digital marketing solutions. Net income was $5.1 billion, reflecting the company's successful subscription model and product innovation."
+Salesforce,"Salesforce reported a 10% increase in revenue to $7.7 billion, driven by strong demand for its CRM solutions. Net income was $1.1 billion, highlighting the company's market leadership and innovative product offerings."
+PayPal,"PayPal saw a 13% increase in revenue to $7.0 billion, driven by strong growth in payment volumes and new user acquisition. Net income was $1.6 billion, reflecting the company's successful expansion into new markets."
+Square,"Square's revenue grew by 15% to $6.5 billion, driven by strong demand for its payment and financial services solutions. Net income was $1.2 billion, highlighting the company's innovative product offerings and market expansion."
+Zoom,"Zoom reported a 9% increase in revenue to $1.2 billion, driven by continued demand for its video conferencing solutions. Net income was $300 million, reflecting the company's successful expansion into new markets and product innovation."
+Uber,"Uber's revenue grew by 10% to $7.9 billion, driven by strong demand for its ride-hailing and delivery services. Net income was $400 million, highlighting the company's successful cost management and market expansion."
+Lyft,"Lyft saw a 7% increase in revenue to $1.0 billion, driven by strong demand for its ride-hailing services. Net income was $100 million, reflecting the company's successful cost management and market expansion."
+Airbnb,"Airbnb reported a 12% increase in revenue to $1.8 billion, driven by strong demand for its short-term rental services. Net income was $300 million, highlighting the company's successful expansion into new markets and product innovation."
+Booking,"Booking saw a 10% increase in revenue to $3.5 billion, driven by strong demand for its travel services. Net income was $800 million, reflecting the company's successful cost management and market expansion."
+Chevron,"Chevron reported a 6% increase in revenue to $34.9 billion, driven by higher oil prices and refining margins. Net income was $5.4 billion, reflecting strong operational performance and cost management."
+ExxonMobil,"ExxonMobil's revenue grew by 9% to $59.8 billion, driven by higher oil and gas prices. Net income was $8.7 billion, highlighting the company's strong financial position and operational efficiencies."
+Pfizer,"Pfizer saw a 7% increase in revenue to $22.1 billion, driven by strong sales of its COVID-19 vaccine and antiviral treatment. Net income was $4.2 billion, reflecting the company's successful product launches and market demand."
+Johnson & Johnson,"Johnson & Johnson reported a 5% increase in revenue to $24.0 billion, driven by strong sales in its pharmaceutical and medical device segments. Net income was $6.3 billion, highlighting the company's diversified product portfolio and market leadership."
+Procter & Gamble,"Procter & Gamble's revenue grew by 6% to $20.8 billion, driven by strong demand for its consumer health and hygiene products. Net income was $3.4 billion, reflecting the company's effective cost management and brand strength."
+Coca-Cola,"Coca-Cola reported a 4% increase in revenue to $10.5 billion, driven by strong demand for its beverages and successful marketing campaigns. Net income was $2.8 billion, reflecting the company's effective cost management and brand strength."
+PepsiCo,"PepsiCo saw a 5% increase in revenue to $19.7 billion, driven by strong demand for its snacks and beverages. Net income was $3.2 billion, reflecting the company's successful product innovations and market expansion."
+Walmart,"Walmart reported a 6% increase in revenue to $138.3 billion, driven by strong sales in its e-commerce and grocery segments. Net income was $4.6 billion, highlighting the company's effective cost management and strategic investments."
+Home Depot,"Home Depot saw a 10% increase in revenue to $41.1 billion, driven by strong demand for home improvement products. Net income was $5.5 billion, reflecting the company's successful market positioning and operational efficiencies."
+Costco,"Costco reported an 8% increase in revenue to $52.6 billion, driven by strong membership renewals and sales growth in its retail stores. Net income was $1.6 billion, showcasing the company's effective business model and customer loyalty."
+Visa,"Visa's revenue grew by 11% to $7.2 billion, driven by increased payment volumes and new partnerships. Net income was $3.9 billion, highlighting the company's strong market position and financial stability."
+Mastercard,"Mastercard reported a 9% increase in revenue to $5.8 billion, driven by strong growth in cross-border transactions and digital payments. Net income was $2.9 billion, reflecting the company's successful expansion into new markets."
+McDonald's,"McDonald's saw a 5% increase in revenue to $5.7 billion, driven by strong same-store sales and new product launches. Net income was $1.8 billion, highlighting the company's effective cost management and brand strength."
+Starbucks,"Starbucks reported a 7% increase in revenue to $8.7 billion, driven by strong sales in its U.S. and China markets. Net income was $1.1 billion, reflecting the company's successful product innovations and market expansion."
+Nike,"Nike's revenue grew by 12% to $13.3 billion, driven by strong demand for its athletic apparel and footwear. Net income was $3.5 billion, showcasing the company's effective marketing strategies and brand strength."
+Adidas,"Adidas saw a 9% increase in revenue to $7.0 billion, driven by strong sales in its sportswear and footwear segments. Net income was $1.2 billion, highlighting the company's successful product launches and market expansion."
+Toyota,"Toyota reported a 5% increase in revenue to $70.8 billion, driven by strong sales in its hybrid and electric vehicles. Net income was $5.0 billion, reflecting the company's diversified product portfolio and market leadership."
+Volkswagen,"Volkswagen's revenue grew by 8% to $67.2 billion, driven by strong sales in its luxury and electric vehicle segments. Net income was $6.2 billion, showcasing the company's effective cost management and market expansion."
+Ford,"Ford saw a 7% increase in revenue to $43.9 billion, driven by strong demand for its trucks and electric vehicles. Net income was $2.4 billion, highlighting the company's successful product innovations and market expansion."
+General Motors,"General Motors reported a 6% increase in revenue to $40.1 billion, driven by strong sales in its SUVs and electric vehicles. Net income was $3.1 billion, reflecting the company's effective cost management and market expansion."
+Honda,"Honda reported a 4% increase in revenue to $35.7 billion, driven by strong sales in its motorcycles and electric vehicles. Net income was $2.0 billion, showcasing the company's successful product innovations and market expansion."
+Hyundai,"Hyundai saw a 6% increase in revenue to $33.5 billion, driven by strong demand for its SUVs and electric vehicles. Net income was $2.5 billion, reflecting the company's effective cost management and product innovation."
+Sony,"Sony's revenue grew by 10% to $24.7 billion, driven by strong sales in its gaming and entertainment segments. Net income was $2.3 billion, highlighting the company's successful product launches and content offerings."
+IBM,"IBM saw a 5% increase in revenue to $18.7 billion, driven by growth in its cloud and cognitive software segments. Net income was $2.1 billion, reflecting the company's focus on high-margin businesses."
+Dell,"Dell reported a 7% increase in revenue to $24.1 billion, driven by strong demand for its PCs and enterprise solutions. Net income was $1.9 billion, showcasing the company's effective cost management and market leadership."
+HP,"HP's revenue grew by 6% to $15.1 billion, driven by strong demand for PCs and printers. Net income was $1.2 billion, reflecting the company's effective cost management and product innovation."
+Intel,"Intel reported a 9% year-over-year increase in revenue to $12.7 billion, but faced a GAAP loss per share of $0.09 due to ongoing restructuring and investments in their IDM 2.0 strategy aimed at regaining technology leadership."
+AMD,"AMD's revenue grew by 12% to $6.4 billion, driven by strong demand for its processors and graphics cards. Net income was $1.4 billion, highlighting the company's successful product innovations and market expansion."
+Micron,"Micron saw a 9% increase in revenue to $7.8 billion, driven by strong demand for its memory and storage solutions. Net income was $2.0 billion, reflecting the company's effective cost management and market leadership."
+Nvidia,"Nvidia's revenue grew by 22% to $8.9 billion, driven by strong demand for GPUs in gaming and data centers. Net income rose to $3.1 billion, showcasing the company's leadership in the semiconductor market."
+Qualcomm,"Qualcomm reported a 7% increase in revenue to $9.3 billion, driven by strong demand for its mobile processors and 5G solutions. Net income was $2.7 billion, highlighting the company's successful product innovations and market expansion."
+Broadcom,"Broadcom saw a 10% increase in revenue to $8.2 billion, driven by strong demand for its semiconductor and software solutions. Net income was $2.6 billion, reflecting the company's effective cost management and market leadership."
+Texas Instruments,"Texas Instruments reported a 6% increase in revenue to $4.9 billion, driven by strong demand for its analog and embedded processing solutions. Net income was $1.8 billion, showcasing the company's effective cost management and market leadership."
+Xilinx,"Xilinx saw a 7% increase in revenue to $3.2 billion, driven by strong demand for its programmable logic devices. Net income was $1.1 billion, highlighting the company's successful product innovations and market expansion."
+Altera,"Altera reported a 5% increase in revenue to $2.1 billion, driven by strong demand for its FPGA solutions. Net income was $800 million, reflecting the company's effective cost management and market leadership."
+Apple,"Apple reported a 9% increase in revenue to $89.6 billion, bolstered by strong iPhone sales and growth in its services segment. Net income was $23.6 billion, showing a robust performance across its hardware and software products."
