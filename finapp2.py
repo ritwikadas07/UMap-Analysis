@@ -111,7 +111,7 @@ def intro():
     st.markdown("<h1 style='text-align: center; color: #4CAF50;'>VectorViz: Exploring Vector Projections</h1>", unsafe_allow_html=True)
     st.markdown("""
     <div style='font-size: 20px; text-align: center;'>
-        <b>Author:</b> Ritwika Das for MQube.<br>
+        <b>Author:</b> Ritwika Das for MQube Cognition.<br>
         <b>Mentor and Co-Author:</b> Rajarshi Das
     </div>
     <hr style="border:1px solid #4CAF50">
