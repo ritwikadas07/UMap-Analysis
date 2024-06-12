@@ -191,6 +191,9 @@ def app():
             if dataset_choice == "Digits MNIST (Image Data)":
                 st.write("### Digits MNIST Dataset")
                 st.write("The MNIST dataset consists of 70,000 grayscale images of handwritten digits, with 60,000 for training and 10,000 for testing. Each image is 28x28 pixels.")
+                st.write("**Data Points:** 70,000")
+                st.write("**Number of Rows:** 70,000")
+                st.write("**Number of Columns:** 784")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
                 mnist_digits = np.concatenate([x_train, x_test], axis=0)
                 mnist_digits = mnist_digits[:len(mnist_digits)//4]  # Sample one-fourth of the dataset
@@ -212,6 +215,9 @@ def app():
             elif dataset_choice == "Fashion MNIST (Image Data)":
                 st.write("### Fashion MNIST Dataset")
                 st.write("The Fashion MNIST dataset contains 70,000 grayscale images of 10 categories of clothing items, with 60,000 for training and 10,000 for testing. Each image is 28x28 pixels.")
+                st.write("**Data Points:** 70,000")
+                st.write("**Number of Rows:** 70,000")
+                st.write("**Number of Columns:** 784")
                 df, images = load_fashion_mnist_dataset()
                 st.write("### Contents of the Fashion MNIST Dataset")
                 st.write(df.head(20))
@@ -231,6 +237,9 @@ def app():
             elif dataset_choice == "Animal Descriptions (Text Data)":
                 st.write("### Animal Descriptions Dataset")
                 st.write("This dataset contains 100 sentences describing various animals. Each description is vectorized using TF-IDF.")
+                st.write("**Data Points:** 100")
+                st.write("**Number of Rows:** 100")
+                st.write("**Number of Columns:** Varies by description")
                 features, labels, df = load_animal_descriptions()
                 st.write("### Animal Descriptions Dataset")
                 st.write(df)
@@ -240,6 +249,9 @@ def app():
             elif dataset_choice == "NAICS Codes (Text Data)":
                 st.write("### NAICS Codes Dataset")
                 st.write("This dataset contains descriptions of various NAICS codes. Each description is vectorized using TF-IDF.")
+                st.write("**Data Points:** Varies")
+                st.write("**Number of Rows:** Varies")
+                st.write("**Number of Columns:** Varies by description")
                 features, labels, df = load_naics_codes()
                 st.write("### NAICS Codes Dataset")
                 st.write(df)
@@ -249,6 +261,9 @@ def app():
             elif dataset_choice == "Financial Statements (Text Data)":
                 st.write("### Financial Statements Dataset")
                 st.write("This dataset contains descriptions of financial statements from various companies. Each description is vectorized using TF-IDF.")
+                st.write("**Data Points:** Varies")
+                st.write("**Number of Rows:** Varies")
+                st.write("**Number of Columns:** Varies by description")
                 features, labels, df = load_financial_statements()
                 st.write("### Financial Statements Dataset")
                 st.write(df)
