@@ -147,7 +147,7 @@ def intro():
         The latest version gives users the flexibility to choose between 2D and 3D visualizations for their dimensionality reduction analyses, whether using UMAP, PCA, or VAE. This enhancement ensures that users can tailor their analysis to their specific needs and preferences.
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
-        <b>Version 8: June 11th, 2024: Setting Default homepage, showing TFIDF vectorization and Dataset Descriptions.</b><br>
+        <b>Version 8:        June 11th, 2024: Setting Default homepage, showing TFIDF vectorization and Dataset Descriptions.</b><br>
         The latest version gives users the view of the MNIST 2D dataset as default while operating the application and adds descriptions of the datasets for user's convenience. It also shows the values of vectors after TF-IDF is applied.
     </div>
     """, unsafe_allow_html=True)
@@ -167,470 +167,463 @@ def app():
     
     submit = st.sidebar.button("Submit")
 
-    if dataset_choice == "Upload your own CSV file":
-        uploaded_file = st.sidebar.file_uploader("Upload the CSV file", type="csv")
-        if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file)
-            st.write("### First 10 Lines of the Uploaded Data")
-            st.write(df.head(10))
-            numeric_df = df.select_dtypes(include=[np.number])
-            if 'label' in df.columns:
-                labels = df['label']
-                features = numeric_df.drop(columns=['label'])
-            elif 'Animal' in df.columns:
-                labels = df['Animal']
-                features = numeric_df
-            else:
-                labels = df.index
-                features = numeric_df
+    if submit:
+        st.session_state['submitted'] = True
+        st.session_state['dataset_choice'] = dataset_choice
+        st.session_state['analysis_choice'] = analysis_choice
+        st.session_state['dimensionality'] = dimensionality
+        st.session_state['color_map'] = color_map
+
+    # Default view for Digits MNIST 2D UMAP
+    if 'submitted' not in st.session_state or not st.session_state['submitted']:
+        default_view()
     else:
-        if submit or 'submitted' in st.session_state:
-            st.session_state['submitted'] = True
+        # Logic for submitted case
+        dataset_choice = st.session_state['dataset_choice']
+        analysis_choice = st.session_state['analysis_choice']
+        dimensionality = st.session_state['dimensionality']
+        color_map = st.session_state['color_map']
 
-            if dataset_choice == "Digits MNIST":
-                st.write("Using the Digits MNIST dataset.")
-                (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-                mnist_digits = np.concatenate([x_train, x_test], axis=0)
-                mnist_digits = mnist_digits[:len(mnist_digits)//4]  # Sample one-fourth of the dataset
-                mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
-                labels = np.concatenate([y_train, y_test])[:len(mnist_digits)]  # Sample corresponding labels
+        if dataset_choice == "Digits (MNIST) Dataset)":
+            st.write("Using the Digits MNIST dataset.")
+            (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+            mnist_digits = np.concatenate([x_train, x_test], axis=0)
+            mnist_digits = mnist_digits[:len(mnist_digits)//4]  # Sample one-fourth of the dataset
+            mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
+            labels = np.concatenate([y_train, y_test])[:len(mnist_digits)]  # Sample corresponding labels
 
-                st.write(f"### Digits MNIST Dataset\n- Number of datapoints: {len(mnist_digits)}\n- Number of features: {mnist_digits.shape[1:]}")
-                st.write("### Sample Images from the MNIST Dataset")
-                fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-                for i in range(5):
-                    axes[i].imshow(mnist_digits[i].reshape(28, 28), cmap='gray')
-                    axes[i].set_title(f"Label: {labels[i]}")
-                    axes[i].axis('off')
-                st.pyplot(fig)
+            st.write(f"### Digits MNIST Dataset\n- Number of datapoints: {len(mnist_digits)}\n- Number of features: {mnist_digits.shape[1:]}")
+            st.write("### Sample Images from the MNIST Dataset")
+            fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+            for i in range(5):
+                axes[i].imshow(mnist_digits[i].reshape(28, 28), cmap='gray')
+                axes[i].set_title(f"Label: {labels[i]}")
+                axes[i].axis('off')
+            st.pyplot(fig)
 
-                numeric_df = pd.DataFrame(mnist_digits.reshape((mnist_digits.shape[0], -1)))
-                features = numeric_df
-                labels = pd.Series(labels)
+            numeric_df = pd.DataFrame(mnist_digits.reshape((mnist_digits.shape[0], -1)))
+            features = numeric_df
+            labels = pd.Series(labels)
 
-                if analysis_choice == "UMAP":
-                    umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                    umap_results = umap_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D UMAP Projection of Digits MNIST',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
+            if analysis_choice == "UMAP":
+                umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+                umap_results = umap_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D UMAP Projection of Digits MNIST',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D UMAP Projection of Digits MNIST',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "PCA":
+                pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+                pca_results = pca_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D PCA Projection of Digits MNIST',
+                                      scene=dict(xaxis_title='Eigenvector 1',
+                                                 yaxis_title='Eigenvector 2',
+                                                 zaxis_title='Eigenvector 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of Digits MNIST',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "VAE":
+                vae_latent_space = vae_latent
+                if dimensionality == "3D":
+                    if vae_latent_space.shape[1] == 3:
+                        vae_3d_results = vae_latent_space[:, :3]
                     else:
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D UMAP Projection of Digits MNIST',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
+                        vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                        vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                    result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D VAE Projection of Digits MNIST',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    vae_2d_results = vae_latent_space[:, :2]
+                    result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D VAE Projection of Digits MNIST',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
-                    if dataset_choice == "Digits MNIST" and dimensionality == "2D":
-                        plot_latent_space(vae_decoder)
-                        plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
+                plot_latent_space(vae_decoder)
+                plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
 
-                elif analysis_choice == "PCA":
-                    pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
-                    pca_results = pca_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D PCA Projection of Digits MNIST',
-                                          scene=dict(xaxis_title='Eigenvector 1',
-                                                     yaxis_title='Eigenvector 2',
-                                                     zaxis_title='Eigenvector 3'))
-                        st.plotly_chart(fig)
+        # Continue with the rest of the datasets and analyses
+        elif dataset_choice == "Fashion (MNIST) Dataset":
+            st.write("Using the Fashion MNIST dataset.")
+            df, images = load_fashion_mnist_dataset()
+            st.write(f"### Fashion MNIST Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset consists of grayscale images of 10 different categories of clothing items, each represented as a 28x28 pixel image.")
+            st.write("### Contents of the Fashion MNIST Dataset")
+            st.write(df.head(20))
+
+            st.write("### Sample             Images from the Fashion MNIST Dataset")
+            fig, axes = plt.subplots(1, 5, figsize=(10, 3))
+            for i in range(5):
+                axes[i].imshow(images[i], cmap='gray')
+                axes[i].set_title(f"Label: {df['label'][i]}")
+                axes[i].axis('off')
+            st.pyplot(fig)
+
+            numeric_df = df.select_dtypes(include=[np.number])
+            labels = df['label']
+            features = numeric_df.drop(columns=['label'])
+
+            if analysis_choice == "UMAP":
+                umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+                umap_results = umap_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D UMAP Projection of Fashion MNIST',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D UMAP Projection of Fashion MNIST',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "PCA":
+                pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+                pca_results = pca_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D PCA Projection of Fashion MNIST',
+                                      scene=dict(xaxis_title='Eigenvector 1',
+                                                 yaxis_title='Eigenvector 2',
+                                                 zaxis_title='Eigenvector 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of Fashion MNIST',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "VAE":
+                vae_latent_space = vae_latent
+                if dimensionality == "3D":
+                    if vae_latent_space.shape[1] == 3:
+                        vae_3d_results = vae_latent_space[:, :3]
                     else:
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D PCA Projection of Digits MNIST',
-                                          xaxis_title='Eigenvector 1',
-                                          yaxis_title='Eigenvector 2')
-                        st.plotly_chart(fig)
+                        vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                        vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                    result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D VAE Projection of Fashion MNIST',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    vae_2d_results = vae_latent_space[:, :2]
+                    result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D VAE Projection of Fashion MNIST',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
-                elif analysis_choice == "VAE":
-                    vae_latent_space = vae_latent
-                    if dimensionality == "3D":
-                        if vae_latent_space.shape[1] == 3:
-                            vae_3d_results = vae_latent_space[:, :3]
-                        else:
-                            vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                            vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                        result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D VAE Projection of Digits MNIST',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
+        elif dataset_choice == "Animal Descriptions (Text)":
+            st.write("Using the Animal Descriptions dataset.")
+            features, labels, df = load_animal_descriptions()
+            st.write(f"### Animal Descriptions Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains sentences describing various animals, vectorized using TF-IDF to analyze and visualize the relationships between descriptions.")
+            st.write("### Animal Descriptions Dataset")
+            st.write(df)
+            st.write("### TF-IDF Vectors")
+            st.write(features)
+
+            if analysis_choice == "UMAP":
+                umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+                umap_results = umap_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D UMAP Projection of Animal Descriptions',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D UMAP Projection of Animal Descriptions',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "PCA":
+                pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+                pca_results = pca_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D PCA Projection of Animal Descriptions',
+                                      scene=dict(xaxis_title='Eigenvector 1',
+                                                 yaxis_title='Eigenvector 2',
+                                                 zaxis_title='Eigenvector 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of Animal Descriptions',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "VAE":
+                vae_latent_space = vae_latent
+                if dimensionality == "3D":
+                    if vae_latent_space.shape[1] == 3:
+                        vae_3d_results = vae_latent_space[:, :3]
                     else:
-                        vae_2d_results = vae_latent_space[:, :2]
-                        result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D VAE Projection of Digits MNIST',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
+                        vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                        vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                    result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D VAE Projection of Animal Descriptions',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    vae_2d_results = vae_latent_space[:, :2]
+                    result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D VAE Projection of Animal Descriptions',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
-                    if dataset_choice == "Digits MNIST":
-                        plot_latent_space(vae_decoder)
-                        plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
+        elif dataset_choice == "NAICS Codes (Text)":
+            st.write("Using the NAICS Codes dataset.")
+            features, labels, df = load_naics_codes()
+            st.write(f"### NAICS Codes Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains industry descriptions categorized by NAICS codes, vectorized using TF-IDF to analyze and visualize the similarities and differences between industry descriptions.")
+            st.write("### NAICS Codes Dataset")
+            st.write(df)
+            st.write("### TF-IDF Vectors")
+            st.write(features)
 
-            elif dataset_choice == "Fashion MNIST":
-                st.write("Using the Fashion MNIST dataset.")
-                df, images = load_fashion_mnist_dataset()
-                st.write(f"### Fashion MNIST Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset consists of grayscale images of 10 different categories of clothing items, each represented as a 28x28 pixel image.")
-st.write("### Contents of the Fashion MNIST Dataset")
-                st.write(df.head(20))
+            if analysis_choice == "UMAP":
+                umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+                umap_results = umap_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D UMAP Projection of NAICS Codes',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D UMAP Projection of NAICS Codes',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
-                st.write("### Sample Images from the Fashion MNIST Dataset")
-                fig, axes = plt.subplots(1, 5, figsize=(10, 3))
-                for i in range(5):
-                    axes[i].imshow(images[i], cmap='gray')
-                    axes[i].set_title(f"Label: {df['label'][i]}")
-                    axes[i].axis('off')
-                st.pyplot(fig)
+            elif analysis_choice == "PCA":
+                pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+                pca_results = pca_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D PCA Projection of NAICS Codes',
+                                      scene=dict(xaxis_title='Eigenvector 1',
+                                                 yaxis_title='Eigenvector 2',
+                                                 zaxis_title='Eigenvector 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of NAICS Codes',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
 
-                numeric_df = df.select_dtypes(include=[np.number])
-                labels = df['label']
-                features = numeric_df.drop(columns=['label'])
-
-                if analysis_choice == "UMAP":
-                    umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                    umap_results = umap_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D UMAP Projection of Fashion MNIST',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
+            elif analysis_choice == "VAE":
+                vae_latent_space = vae_latent
+                if dimensionality == "3D":
+                    if vae_latent_space.shape[1] == 3:
+                        vae_3d_results = vae_latent_space[:, :3]
                     else:
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D UMAP Projection of Fashion MNIST',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
+                        vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                        vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                    result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D VAE Projection of NAICS Codes',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    vae_2d_results = vae_latent_space[:, :2]
+                    result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D VAE Projection of NAICS Codes',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
-                elif analysis_choice == "PCA":
-                    pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
-                    pca_results = pca_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D PCA Projection of Fashion MNIST',
-                                          scene=dict(xaxis_title='Eigenvector 1',
-                                                     yaxis_title='Eigenvector 2',
-                                                     zaxis_title='Eigenvector 3'))
-                        st.plotly_chart(fig)
+        elif dataset_choice == "Financial Statements (Text)":
+            st.write("Using the Financial Statements dataset.")
+            features, labels, df = load_financial_statements()
+            st.write(f"### Financial Statements Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset includes financial statement descriptions of various companies, vectorized using TF-IDF to analyze and visualize the relationships between financial data.")
+            st.write("### Financial Statements Dataset")
+            st.write(df)
+            st.write("### TF-IDF Vectors")
+            st.write(features)
+
+            if analysis_choice == "UMAP":
+                umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
+                umap_results = umap_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D UMAP Projection of Financial Statements',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D UMAP Projection of Financial Statements',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "PCA":
+                pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
+                pca_results = pca_model.fit_transform(features)
+                if dimensionality == "3D":
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D PCA Projection of Financial Statements',
+                                      scene=dict(xaxis_title='Eigenvector 1',
+                                                 yaxis_title='Eigenvector 2',
+                                                 zaxis_title='Eigenvector 3'))
+                    st.plotly_chart(fig)
+                else:
+                    result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D PCA Projection of Financial Statements',
+                                      xaxis_title='Eigenvector 1',
+                                      yaxis_title='Eigenvector 2')
+                    st.plotly_chart(fig)
+
+            elif analysis_choice == "VAE":
+                vae_latent_space = vae_latent
+                if dimensionality == "3D":
+                    if vae_latent_space.shape[1] == 3:
+                        vae_3d_results = vae_latent_space[:, :3]
                     else:
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D PCA Projection of Fashion MNIST',
-                                          xaxis_title='Eigenvector 1',
-                                          yaxis_title='Eigenvector 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "VAE":
-                    vae_latent_space = vae_latent
-                    if dimensionality == "3D":
-                        if vae_latent_space.shape[1] == 3:
-                            vae_3d_results = vae_latent_space[:, :3]
-                        else:
-                            vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                            vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                        result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D VAE Projection of Fashion MNIST',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        vae_2d_results = vae_latent_space[:, :2]
-                        result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D VAE Projection of Fashion MNIST',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-            elif dataset_choice == "Animal Descriptions":
-                st.write("Using the Animal Descriptions dataset.")
-                features, labels, df = load_animal_descriptions()
-                st.write(f"### Animal Descriptions Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains sentences describing various animals, vectorized using TF-IDF to analyze and visualize the relationships between descriptions.")
-                st.write("### Animal Descriptions Dataset")
-                st.write(df)
-                st.write("### TF-IDF Vectors")
-                st.write(features)
-
-                if analysis_choice == "UMAP":
-                    umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                    umap_results = umap_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D UMAP Projection of Animal Descriptions',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D UMAP Projection of Animal Descriptions',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "PCA":
-                    pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
-                    pca_results = pca_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D PCA Projection of Animal Descriptions',
-                                          scene=dict(xaxis_title='Eigenvector 1',
-                                                     yaxis_title='Eigenvector 2',
-                                                     zaxis_title='Eigenvector 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D PCA Projection of Animal Descriptions',
-                                          xaxis_title='Eigenvector 1',
-                                          yaxis_title='Eigenvector 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "VAE":
-                    vae_latent_space = vae_latent
-                    if dimensionality == "3D":
-                        if vae_latent_space.shape[1] == 3:
-                            vae_3d_results = vae_latent_space[:, :3]
-                        else:
-                            vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                            vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                        result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D VAE Projection of Animal Descriptions',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        vae_2d_results = vae_latent_space[:, :2]
-                        result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D VAE Projection of Animal Descriptions',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-            elif dataset_choice == "NAICS Codes":
-                st.write("Using the NAICS Codes dataset.")
-                features, labels, df = load_naics_codes()
-                st.write(f"### NAICS Codes Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains industry descriptions categorized by NAICS codes, vectorized using TF-IDF to analyze and visualize the similarities and differences between industry descriptions.")
-                st.write("### NAICS Codes Dataset")
-                st.write(df)
-                st.write("### TF-IDF Vectors")
-                st.write(features)
-
-                if analysis_choice == "UMAP":
-                    umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                    umap_results = umap_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D UMAP Projection of NAICS Codes',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D UMAP Projection of NAICS Codes',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "PCA":
-                    pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
-                    pca_results = pca_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D PCA Projection of NAICS Codes',
-                                          scene=dict(xaxis_title='Eigenvector 1',
-                                                     yaxis_title='Eigenvector 2',
-                                                     zaxis_title='Eigenvector 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D PCA Projection of NAICS Codes',
-                                          xaxis_title='Eigenvector 1',
-                                          yaxis_title='Eigenvector 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "VAE":
-                    vae_latent_space = vae_latent
-                    if dimensionality == "3D":
-                        if vae_latent_space.shape[1] == 3:
-                            vae_3d_results = vae_latent_space[:, :3]
-                        else:
-                            vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                            vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                        result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D VAE Projection of NAICS Codes',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        vae_2d_results = vae_latent_space[:, :2]
-                        result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D VAE Projection of NAICS Codes',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-            elif dataset_choice == "Financial Statements":
-                st.write("Using the Financial Statements dataset.")
-                features, labels, df = load_financial_statements()
-                st.write(f"### Financial Statements Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset includes financial statement descriptions of various companies, vectorized using TF-IDF to analyze and visualize the relationships between financial data.")
-                st.write("### Financial Statements Dataset")
-                st.write(df)
-                st.write("### TF-IDF Vectors")
-                st.write(features)
-
-                if analysis_choice == "UMAP":
-                    umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
-                    umap_results = umap_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D UMAP Projection of Financial Statements',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D UMAP Projection of Financial Statements',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "PCA":
-                    pca_model = PCA(n_components=3 if dimensionality == "3D" else 2)
-                    pca_results = pca_model.fit_transform(features)
-                    if dimensionality == "3D":
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2', 'Eigenvector 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Eigenvector 1', y='Eigenvector 2', z='Eigenvector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D PCA Projection of Financial Statements',
-                                          scene=dict(xaxis_title='Eigenvector 1',
-                                                     yaxis_title='Eigenvector 2',
-                                                     zaxis_title='Eigenvector 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        result_df = pd.DataFrame(pca_results, columns=['Eigenvector 1', 'Eigenvector 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Eigenvector 1', y='Eigenvector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D PCA Projection of Financial Statements',
-                                          xaxis_title='Eigenvector 1',
-                                          yaxis_title='Eigenvector 2')
-                        st.plotly_chart(fig)
-
-                elif analysis_choice == "VAE":
-                    vae_latent_space = vae_latent
-                    if dimensionality == "3D":
-                        if vae_latent_space.shape[1] == 3:
-                            vae_3d_results = vae_latent_space[:, :3]
-                        else:
-                            vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
-                            vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
-                        result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='3D VAE Projection of Financial Statements',
-                                          scene=dict(xaxis_title='Dimension 1',
-                                                     yaxis_title='Dimension 2',
-                                                     zaxis_title='Dimension 3'))
-                        st.plotly_chart(fig)
-                    else:
-                        vae_2d_results = vae_latent_space[:, :2]
-                        result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
-                        result_df['Label'] = labels.astype(str)
-                        fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
-                        fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
-                        fig.update_layout(title='2D VAE Projection of Financial Statements',
-                                          xaxis_title='Dimension 1',
-                                          yaxis_title='Dimension 2')
-                        st.plotly_chart(fig)
+                        vae_2d_results = vae_latent_space[:, :2].reshape(-1, 2)
+                        vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
+                    result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='3D VAE Projection of Financial Statements',
+                                      scene=dict(xaxis_title='Dimension 1',
+                                                 yaxis_title='Dimension 2',
+                                                 zaxis_title='Dimension 3'))
+                    st.plotly_chart(fig)
+                else:
+                    vae_2d_results = vae_latent_space[:, :2]
+                    result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
+                    result_df['Label'] = labels.astype(str)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+                    fig.update_layout(title='2D VAE Projection of Financial Statements',
+                                      xaxis_title='Dimension 1',
+                                      yaxis_title='Dimension 2')
+                    st.plotly_chart(fig)
 
 def default_view():
     st.write("Using the Digits MNIST dataset.")
@@ -675,5 +668,6 @@ if __name__ == "__main__":
         if not st.session_state['submitted']:
             default_view()
         app()
+
 
 
