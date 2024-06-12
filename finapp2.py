@@ -184,7 +184,7 @@ def app():
         dimensionality = st.session_state['dimensionality']
         color_map = st.session_state['color_map']
 
-        if dataset_choice == "Digits (MNIST) Dataset)":
+        if dataset_choice == "Digits MNIST":
             st.write("Using the Digits MNIST dataset.")
             (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
             mnist_digits = np.concatenate([x_train, x_test], axis=0)
@@ -282,15 +282,14 @@ def app():
                 plot_latent_space(vae_decoder)
                 plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
 
-        # Continue with the rest of the datasets and analyses
-        elif dataset_choice == "Fashion (MNIST) Dataset":
+        elif dataset_choice == "Fashion MNIST":
             st.write("Using the Fashion MNIST dataset.")
             df, images = load_fashion_mnist_dataset()
             st.write(f"### Fashion MNIST Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset consists of grayscale images of 10 different categories of clothing items, each represented as a 28x28 pixel image.")
             st.write("### Contents of the Fashion MNIST Dataset")
             st.write(df.head(20))
 
-            st.write("### Sample             Images from the Fashion MNIST Dataset")
+            st.write("### Sample Images from the Fashion MNIST Dataset")
             fig, axes = plt.subplots(1, 5, figsize=(10, 3))
             for i in range(5):
                 axes[i].imshow(images[i], cmap='gray')
@@ -376,7 +375,7 @@ def app():
                                       yaxis_title='Dimension 2')
                     st.plotly_chart(fig)
 
-        elif dataset_choice == "Animal Descriptions (Text)":
+        elif dataset_choice == "Animal Descriptions":
             st.write("Using the Animal Descriptions dataset.")
             features, labels, df = load_animal_descriptions()
             st.write(f"### Animal Descriptions Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains sentences describing various animals, vectorized using TF-IDF to analyze and visualize the relationships between descriptions.")
@@ -459,7 +458,7 @@ def app():
                                       yaxis_title='Dimension 2')
                     st.plotly_chart(fig)
 
-        elif dataset_choice == "NAICS Codes (Text)":
+        elif dataset_choice == "NAICS Codes":
             st.write("Using the NAICS Codes dataset.")
             features, labels, df = load_naics_codes()
             st.write(f"### NAICS Codes Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset contains industry descriptions categorized by NAICS codes, vectorized using TF-IDF to analyze and visualize the similarities and differences between industry descriptions.")
@@ -542,7 +541,7 @@ def app():
                                       yaxis_title='Dimension 2')
                     st.plotly_chart(fig)
 
-        elif dataset_choice == "Financial Statements (Text)":
+        elif dataset_choice == "Financial Statements":
             st.write("Using the Financial Statements dataset.")
             features, labels, df = load_financial_statements()
             st.write(f"### Financial Statements Dataset\n- Number of datapoints: {len(df)}\n- Number of features: {df.shape[1] - 1}\n\nThis dataset includes financial statement descriptions of various companies, vectorized using TF-IDF to analyze and visualize the relationships between financial data.")
@@ -667,7 +666,5 @@ if __name__ == "__main__":
     elif st.session_state['page'] == 'app':
         if not st.session_state['submitted']:
             default_view()
-        app()
-
-
-
+        else:
+            app()
