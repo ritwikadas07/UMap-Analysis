@@ -160,10 +160,10 @@ def app():
     st.sidebar.title("Dataset and Analysis Selection")
     datasets = ["Digits MNIST (Image Data)", "Fashion MNIST (Image Data)", "Animal Descriptions (Text Data)", "NAICS Codes (Text Data)", "Financial Statements (Text Data)", "Upload your own CSV file"]
     dataset_choice = st.sidebar.selectbox("Choose a dataset", datasets)
-    color_map = st.sidebar.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
     analysis_types = ["UMAP", "PCA", "VAE"]
     analysis_choice = st.sidebar.selectbox("Select analysis type", analysis_types)
     dimensionality = st.sidebar.selectbox("Select dimensionality", ["2D", "3D"])
+    color_map = st.sidebar.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
 
     submit = st.sidebar.button("Submit")
 
