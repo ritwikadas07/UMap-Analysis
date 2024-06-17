@@ -10,3 +10,4 @@ plotly
 requests
 tensorflow
 keras
+sentence_transformers
