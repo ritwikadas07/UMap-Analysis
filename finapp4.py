@@ -85,11 +85,6 @@ def load_financial_statements(vectorization_method):
     labels = df["Company"]
     return features, labels, df
 
-def load_time_series_data():
-    df = pd.read_csv('company_profits.csv', parse_dates=['Date'])
-    pivot_df = df.pivot(index='Date', columns='Company', values='Profit')
-    return pivot_df
-
 def plot_latent_space(vae_decoder, n=30, figsize=15):
     st.write("### Displaying grid of sampled digits")
     digit_size = 28
@@ -118,21 +113,24 @@ def plot_latent_space(vae_decoder, n=30, figsize=15):
     plt.yticks(pixel_range, sample_range_y)
     plt.xlabel("Dimension 1")
     plt.ylabel("Dimension 2")
-    plt.imshow(figure, cmap="Greys_r")
+    plt.imshow(figure, cmap="viridis")
     st.pyplot(plt)
 
-def plot_label_clusters(vae_encoder, data, labels, color_map):
+def plot_label_clusters(vae_encoder, data, labels):
     st.write("### Displaying 2D Latent Space")
     z_mean, _, _ = vae_encoder.predict(data, verbose=0)
-    plt.figure(figsize=(12, 10))
-    plt.scatter(z_mean[:, 0], z_mean[:, 1], c=labels, cmap=color_map)
-    plt.colorbar()
-    plt.xlabel("Dimension 1")
-    plt.ylabel("Dimension 2")
-    st.pyplot(plt)
+    result_df = pd.DataFrame(z_mean, columns=['Dimension 1', 'Dimension 2'])
+    result_df['Label'] = labels.astype(str)
+    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
+    fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
+    fig.update_layout(title='2D VAE Projection of Vectors',
+                      xaxis_title='Dimension 1',
+                      yaxis_title='Dimension 2')
+    st.plotly_chart(fig)
 
 def intro():
-    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>VectorViz: Exploring Vector Projections</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Manan VectorViz</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Exploring Vector Projections, Embeddings and Latent Space</h1>", unsafe_allow_html=True)
     st.markdown("""
     <div style='font-size: 20px; text-align: center;'>
         <b>Author:</b> Ritwika Das for MQube Cognition.<br>
@@ -177,7 +175,7 @@ def intro():
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>Version 9: June 17th, 2024: Added Detailed Data Information, and Second Page for Explaining Techniques</b><br>
-        The latest version provides detailed information about data points and features in dataset titles and adds a second page that explains PCA, UMAP, VAE, and Time Series Analysis before accessing the app.
+        The latest version provides detailed information about data points and features in dataset titles and adds a second page that explains PCA, UMAP, and VAE, before accessing the app.
     </div>
     """, unsafe_allow_html=True)
     
@@ -200,11 +198,7 @@ def explanation():
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>3. Variational Autoencoder (VAE):</b><br>
-        VAE is a generative model that learns to encode data into a lower-dimensional latent space and then decode it back to the original space. VAEs are used for generating new data samples and understanding the underlying structure of the data. They provide a probabilistic framework for learning latent representations.
-    </div>
-    <div style='font-size: 16px; margin-top: 10px;'>
-        <b>4. Time Series Analysis:</b><br>
-        Time series analysis involves analyzing data points collected or recorded at specific time intervals. This technique is used to identify patterns, trends, and seasonal variations in the data. In this application, time series analysis is used to visualize and analyze the profits of companies over a period of time.
+        VAE is a generative approach that learns to encode data into a lower-dimensional latent space and then decode it back to the original space. VAEs are used for generating new data samples and understanding the underlying structure of the data. They provide a probabilistic framework for learning latent representations.
     </div>
     """, unsafe_allow_html=True)
     
@@ -213,7 +207,7 @@ def explanation():
 
 def app():
     st.sidebar.title("Dataset and Analysis Selection")
-    datasets = ["Digits MNIST (Image Data)", "Fashion MNIST (Image Data)", "Animal Descriptions (Text Data)", "NAICS Codes (Text Data)", "Financial Statements (Text Data)", "Company Profits (Time Series)", "Upload your own CSV file"]
+    datasets = ["Digits MNIST (Image Data)", "Fashion MNIST (Image Data)", "Animal Descriptions (Text Data)", "NAICS Codes (Text Data)", "Financial Statements (Text Data)", "Upload your own CSV file"]
     dataset_choice = st.sidebar.selectbox("Choose a dataset", datasets)
     vectorization_method = None
     if dataset_choice in ["Animal Descriptions (Text Data)", "NAICS Codes (Text Data)", "Financial Statements (Text Data)"]:
@@ -221,12 +215,11 @@ def app():
     analysis_types = ["UMAP", "PCA", "VAE"]
     analysis_choice = st.sidebar.selectbox("Select analysis type", analysis_types)
     dimensionality = st.sidebar.selectbox("Select dimensionality", ["2D", "3D"])
-    color_map = st.sidebar.selectbox("Choose a color map", ["viridis", "cividis", "plasma", "inferno"], index=0)
 
     submit = st.sidebar.button("Submit")
 
     if not submit:
-        st.markdown("<h1 style='text-align: center; color: #4CAF50;'>VectorViz: Exploring Vector Projections</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Manan VectorViz: Exploring Vector Projections, Embeddings and Latent Space </h1>", unsafe_allow_html=True)
         st.markdown("<h3 style='text-align: center;'>Please select your options from the sidebar and click submit</h3>", unsafe_allow_html=True)
     else:
         if dataset_choice == "Upload your own CSV file":
@@ -248,7 +241,7 @@ def app():
         else:
             if dataset_choice == "Digits MNIST (Image Data)":
                 st.write("### Digits MNIST Dataset")
-                st.write("The MNIST dataset consists of 70,000 grayscale images of handwritten digits, with 60,000 for training and 10,000 for testing. Each image is 28x28 pixels.")
+                st.write("The MNIST dataset consists of images of handwritten digits. Each image is 28x28 pixels.")
                 st.write("**Data Points/Rows:** 70,000")
                 st.write("**Features/Columns:** 784")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -256,6 +249,12 @@ def app():
                 mnist_digits = mnist_digits[:len(mnist_digits)//4]
                 mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
                 labels = np.concatenate([y_train, y_test])[:len(mnist_digits)]
+                
+                # Display the first 20 rows of the Digits MNIST dataset
+                mnist_df = pd.DataFrame(mnist_digits.reshape((mnist_digits.shape[0], -1)))
+                mnist_df['label'] = labels
+                st.write("### Contents of the Digits MNIST Dataset (first 20 rows are shown)")
+                st.write(mnist_df.head(20))
 
                 st.write("### Sample Images from the MNIST Dataset")
                 fig, axes = plt.subplots(1, 5, figsize=(10, 3))
@@ -271,7 +270,7 @@ def app():
 
             elif dataset_choice == "Fashion MNIST (Image Data)":
                 st.write("### Fashion MNIST Dataset")
-                st.write("The Fashion MNIST dataset contains 70,000 grayscale images of 10 categories of clothing items, with 60,000 for training and 10,000 for testing. Each image is 28x28 pixels.")
+                st.write("The Fashion MNIST dataset contains images of 10 categories of clothing items. Each image is 28x28 pixels.")
                 st.write("**Data Points/Rows:** 70,000")
                 st.write("**Features/Columns:** 784")
                 df, images = load_fashion_mnist_dataset()
@@ -324,37 +323,13 @@ def app():
                 st.write(f"### {vectorization_method} Vectors for Financial Statements")
                 st.write(features)
 
-            elif dataset_choice == "Company Profits (Time Series)":
-                st.write("### Company Profits Dataset")
-                st.write("This dataset contains time series data of profits for 10 companies over 6 months.")
-                st.write("**Data Points/Rows:** 10 companies over 6 months")
-                st.write("**Features/Columns:** Profits over time")
-                st.write("**Note:** Data was generated from ChatGPT and includes 6 months of profit for 10 companies")
-                df = load_time_series_data()
-                st.write("### Company Profits Dataset (first 20 rows are shown)")
-                st.write(df.head(20))
-
-                # Perform time series analysis (e.g., mean profits over time)
-                mean_profits = df.mean(axis=1)
-                st.write("### Mean Profits Over Time")
-                st.line_chart(mean_profits)
-
-                # Dropdown to select company for individual profit trends
-                selected_company = st.selectbox("Select a Company to View Profit Trend", df.columns)
-                st.write(f"### {selected_company} Profits Over Time")
-                st.line_chart(df[selected_company])
-
-                # Flatten the time series data for dimensionality reduction
-                features = df.T
-                labels = features.index
-
             if analysis_choice == "UMAP":
                 umap_model = umap.UMAP(n_components=3 if dimensionality == "3D" else 2, n_neighbors=15, min_dist=0.1, metric='cosine', random_state=42)
                 umap_results = umap_model.fit_transform(features)
                 if dimensionality == "3D":
                     result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='3D UMAP Projection of Vectors',
                                       scene=dict(xaxis_title='Dimension 1',
@@ -364,7 +339,7 @@ def app():
                 else:
                     result_df = pd.DataFrame(umap_results, columns=['Dimension 1', 'Dimension 2'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='2D UMAP Projection of Vectors',
                                       xaxis_title='Dimension 1',
@@ -377,7 +352,7 @@ def app():
                 if dimensionality == "3D":
                     result_df = pd.DataFrame(pca_results, columns=['Eigen Vector 1', 'Eigen Vector 2', 'Eigen Vector 3'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter_3d(result_df, x='Eigen Vector 1', y='Eigen Vector 2', z='Eigen Vector 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter_3d(result_df, x='Eigen Vector 1', y='Eigen Vector 2', z='Eigen Vector 3', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='3D PCA Projection of Vectors',
                                       scene=dict(xaxis_title='Eigen Vector 1',
@@ -387,7 +362,7 @@ def app():
                 else:
                     result_df = pd.DataFrame(pca_results, columns=['Eigen Vector 1', 'Eigen Vector 2'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter(result_df, x='Eigen Vector 1', y='Eigen Vector 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter(result_df, x='Eigen Vector 1', y='Eigen Vector 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='2D PCA Projection of Vectors',
                                       xaxis_title='Eigen Vector 1',
@@ -404,7 +379,7 @@ def app():
                         vae_3d_results = np.hstack((vae_2d_results, np.zeros((vae_2d_results.shape[0], 1))))
                     result_df = pd.DataFrame(vae_3d_results, columns=['Dimension 1', 'Dimension 2', 'Dimension 3'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter_3d(result_df, x='Dimension 1', y='Dimension 2', z='Dimension 3', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='3D VAE Projection of Vectors',
                                       scene=dict(xaxis_title='Dimension 1',
@@ -415,7 +390,7 @@ def app():
                     vae_2d_results = vae_latent_space[:, :2]
                     result_df = pd.DataFrame(vae_2d_results, columns=['Dimension 1', 'Dimension 2'])
                     result_df['Label'] = labels.astype(str)
-                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale=color_map)
+                    fig = px.scatter(result_df, x='Dimension 1', y='Dimension 2', color='Label', hover_name='Label', color_continuous_scale='viridis')
                     fig.update_traces(marker=dict(size=5), selector=dict(mode='markers'))
                     fig.update_layout(title='2D VAE Projection of Vectors',
                                       xaxis_title='Dimension 1',
@@ -424,7 +399,7 @@ def app():
 
                 if dataset_choice == "Digits MNIST (Image Data)":
                     plot_latent_space(vae_decoder)
-                    plot_label_clusters(vae_encoder, mnist_digits, labels, color_map)
+                    plot_label_clusters(vae_encoder, mnist_digits, labels)
 
 if __name__ == "__main__":
     if 'page' not in st.session_state:
