@@ -242,7 +242,7 @@ def app():
             if dataset_choice == "Digits MNIST (Image Data)":
                 st.write("### Digits MNIST Dataset")
                 st.write("The MNIST dataset consists of images of handwritten digits. Each image is 28x28 pixels.")
-                st.write("**Data Points/Rows:** 70,000")
+                st.write("**Data Points/Rows:** 1,001")
                 st.write("**Features/Columns:** 784")
                 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
                 mnist_digits = np.concatenate([x_train, x_test], axis=0)
@@ -271,7 +271,7 @@ def app():
             elif dataset_choice == "Fashion MNIST (Image Data)":
                 st.write("### Fashion MNIST Dataset")
                 st.write("The Fashion MNIST dataset contains images of 10 categories of clothing items. Each image is 28x28 pixels.")
-                st.write("**Data Points/Rows:** 70,000")
+                st.write("**Data Points/Rows:** 10,000")
                 st.write("**Features/Columns:** 784")
                 df, images = load_fashion_mnist_dataset()
                 st.write("### Contents of the Fashion MNIST Dataset (first 20 rows are shown)")
