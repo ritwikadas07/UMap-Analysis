@@ -191,19 +191,23 @@ def explanation():
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>1. Principal Component Analysis (PCA):</b><br>
         PCA is a statistical technique that transforms the data into a set of orthogonal components called principal components. These components explain the maximum variance in the data. PCA is widely used for feature reduction, noise reduction, and visualization of high-dimensional data.
+        <br><a href="https://setosa.io/ev/principal-component-analysis/" target="_blank">Learn more about PCA</a>
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>2. Uniform Manifold Approximation and Projection (UMAP):</b><br>
         UMAP is a non-linear dimensionality reduction technique that preserves the local and global structure of the data. It is particularly useful for visualizing clusters in high-dimensional data. UMAP is faster and often more effective than other non-linear techniques like t-SNE.
+        <br><a href="https://umap-learn.readthedocs.io/en/latest/" target="_blank">Learn more about UMAP</a>
     </div>
     <div style='font-size: 16px; margin-top: 10px;'>
         <b>3. Variational Autoencoder (VAE):</b><br>
-        VAE is a generative approach that learns to encode data into a lower-dimensional latent space and then decode it back to the original space. VAEs are used for generating new data samples and understanding the underlying structure of the data. They provide a probabilistic framework for learning latent representations.
+        VAE is a generative model that learns to encode data into a lower-dimensional latent space and then decode it back to the original space. VAEs are used for generating new data samples and understanding the underlying structure of the data. They provide a probabilistic framework for learning latent representations.
+        <br><a href="https://towardsdatascience.com/understanding-variational-autoencoders-vaes-f70510919f73" target="_blank">Learn more about VAE</a>
     </div>
     """, unsafe_allow_html=True)
     
     if st.button("Go to App"):
         st.session_state.page = "app"
+
 
 def app():
     st.sidebar.title("Dataset and Analysis Selection")
